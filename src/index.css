@@ -1,0 +1,120 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Brand palette (from the brief) */
+  --color-gs-white: #ffffff;
+  --color-gs-ink: #252525;
+  --color-gs-primary: #3664f4;
+  --color-gs-sky: #60cbff;
+  --color-gs-coral: #e85353;
+
+  /* Semantic surfaces — names kept stable across components */
+  --color-gs-navy: #ffffff;
+  --color-gs-panel: #f6f8fc;
+  --color-gs-deep: #eef2f9;
+  --color-gs-raised: #e6ebf5;
+  --color-gs-ice: #252525;
+  --color-gs-mist: #5c6470;
+  --color-gs-cyan: #3664f4;
+  --color-gs-teal: #1f7f99;
+  --color-gs-amber: #d04040;
+  --color-gs-violet: #60cbff;
+  --color-gs-blue: #252525;
+  --color-gs-danger: #c93232;
+
+  --font-sans: 'Cabin', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shadow-panel: 0 1px 2px rgb(37 37 37 / 0.04), 0 14px 34px -18px rgb(37 37 37 / 0.22);
+  --radius-xl2: 1.25rem;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: rgb(37 37 37 / 0.1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-gs-navy);
+    color: var(--color-gs-ice);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gs-primary);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-gs-primary) 22%, transparent);
+  }
+}
+
+@layer components {
+  .gs-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-gs-mist);
+  }
+
+  .gs-number {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gs-grid-bg {
+    background-image:
+      linear-gradient(to right, rgb(37 37 37 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(37 37 37 / 0.045) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* KaTeX on light backgrounds */
+.katex {
+  font-size: 1.06em;
+  color: var(--color-gs-ink);
+}
+.katex-display {
+  margin: 0.6em 0;
+  padding: 0.35em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Plotly modebar on light backgrounds */
+.js-plotly-plot .plotly .modebar {
+  background: transparent !important;
+}
+.js-plotly-plot .plotly .modebar-btn path {
+  fill: var(--color-gs-mist) !important;
+}
+
+input[type='range'] {
+  accent-color: var(--color-gs-primary);
+}

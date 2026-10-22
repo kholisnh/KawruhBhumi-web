@@ -1,0 +1,34 @@
+import type { ReactNode } from 'react'
+
+interface SelectFieldProps<T extends string> {
+  label: string
+  value: T
+  onChange: (value: T) => void
+  options: Array<{ value: T; label: string; disabled?: boolean }>
+  compact?: boolean
+  className?: string
+  icon?: ReactNode
+}
+
+export function SelectField<T extends string>({ label, value, onChange, options, compact, className = '', icon }: SelectFieldProps<T>) {
+  return (
+    <label className={`block ${className}`}>
+      <span className={`mb-1 items-center gap-1.5 text-[11px] font-medium text-gs-mist ${compact ? 'sr-only' : 'flex'}`}>
+        {icon}
+        {label}
+      </span>
+      <select
+        aria-label={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="w-full cursor-pointer rounded-lg border border-black/10 bg-gs-deep/80 px-2.5 py-1.5 text-xs text-gs-ice transition-colors outline-none focus:border-gs-cyan/60"
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
