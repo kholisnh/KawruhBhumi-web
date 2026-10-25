@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const reflectionTheory: MethodTheory = {
   methodId: 'reflection',
@@ -12,6 +12,7 @@ export const reflectionTheory: MethodTheory = {
       },
       minutes: 4,
       blocks: [
+        figure('reflection-acquisition'),
         p(
           'A seismic source — a hammer, a vibrator or an explosive — sends elastic waves into the ground. Receivers at the surface record the ground motion as a function of time. Each source–receiver pair produces one trace; a line of receivers produces a shot record.',
           'Sumber seismik — palu, vibrator, atau bahan peledak — mengirim gelombang elastik ke dalam tanah. Receiver di permukaan merekam gerakan tanah sebagai fungsi waktu. Setiap pasangan sumber–receiver menghasilkan satu trace; sederet receiver menghasilkan shot record.',
@@ -67,6 +68,7 @@ export const reflectionTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('reflection-fold'),
         p(
           'The forward model starts with layer densities and velocities. It computes impedance contrasts, places reflection coefficients at the correct two-way times, convolves with a Ricker wavelet, and optionally adds transmission losses. The result is a synthetic trace or section that can be compared with a real one.',
           'Model forward dimulai dari densitas dan kecepatan lapisan. Ia menghitung kontras impedansi, menempatkan koefisien refleksi pada waktu dua arah yang benar, mengkonvolusi dengan wavelet Ricker, dan secara opsional menambahkan kehilangan transmisi. Hasilnya adalah trace atau penampang sintetik yang dapat dibandingkan dengan yang nyata.',

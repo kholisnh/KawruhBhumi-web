@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
+import { TheoryFigure } from '../components/geo/TheoryFigure'
 import { Equation } from '../components/ui/Equation'
 import { METHODS, methodById, type MethodId } from '../content/methods'
 import { site, tr } from '../content/site'
@@ -40,6 +41,8 @@ function Block({ block }: { block: TheoryBlock }) {
           <p className="mt-1 text-[12.5px] leading-relaxed text-gs-mist">{tr(block.text, lang)}</p>
         </aside>
       )
+    case 'figure':
+      return <TheoryFigure figureId={block.figureId} />
   }
 }
 
@@ -82,7 +85,7 @@ export function TheoryChapterPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <nav className="flex flex-wrap items-center gap-2 text-[11px] text-gs-mist" aria-label="Breadcrumb">
+      <nav className="flex flex-wrap items-center gap-2 text-xs text-gs-mist" aria-label="Breadcrumb">
         <Link to="/teori" className="hover:text-gs-cyan">
           {tr(site.chapterPage.theory, lang)}
         </Link>
@@ -99,7 +102,7 @@ export function TheoryChapterPage() {
           <div className="lg:sticky lg:top-24">
             <Link to={`/metode/${meta.id}`} className="inline-flex items-center gap-2">
               <span
-                className="flex h-8 w-10 items-center justify-center rounded-md text-[10px] font-bold tracking-wider"
+                className="flex h-8 w-10 items-center justify-center rounded-md text-xs font-bold tracking-wider"
                 style={{ backgroundColor: `${meta.accent}1a`, color: meta.accent }}
               >
                 {info.abbr}
@@ -111,11 +114,11 @@ export function TheoryChapterPage() {
                 <li key={item.id}>
                   <Link
                     to={`/teori/${meta.id}/${item.id}`}
-                    className={`block rounded-md px-2 py-1.5 text-[11.5px] leading-snug transition-colors ${
+                    className={`block rounded-md px-2 py-1.5 text-xs leading-snug transition-colors ${
                       item.id === chapter.id ? 'bg-gs-deep font-semibold text-gs-ice' : 'text-gs-mist hover:bg-gs-deep/60 hover:text-gs-ice'
                     }`}
                   >
-                    <span className="gs-number mr-1.5 text-[9.5px] text-gs-mist">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="gs-number mr-1.5 text-xs text-gs-mist">{String(i + 1).padStart(2, '0')}</span>
                     {tr(item.title, lang)}
                   </Link>
                 </li>
@@ -131,7 +134,7 @@ export function TheoryChapterPage() {
 
         <article className="order-1 min-w-0 lg:order-2">
           <header className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 text-[10.5px] font-semibold tracking-wider uppercase" style={{ color: meta.accent }}>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wider uppercase" style={{ color: meta.accent }}>
               <span>{info.abbr}</span>
               <span className="text-gs-mist">·</span>
               <span className="gs-number">
@@ -151,14 +154,14 @@ export function TheoryChapterPage() {
             ))}
           </div>
 
-          <div className="mt-8 max-w-3xl rounded-xl border border-black/8 bg-gs-panel/70 px-4 py-3 text-[11px] leading-relaxed text-gs-mist">
+          <div className="mt-8 max-w-3xl rounded-xl border border-black/8 bg-gs-panel/70 px-4 py-3 text-xs leading-relaxed text-gs-mist">
             {tr(site.chapterPage.simulatorNote, lang)}
           </div>
 
           <div className="mt-6 flex max-w-3xl flex-col gap-2 border-t border-black/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
             {prev ? (
               <Link to={`/teori/${meta.id}/${prev.id}`} className="group flex flex-col text-left">
-                <span className="text-[10px] font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.prev, lang)}</span>
+                <span className="text-xs font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.prev, lang)}</span>
                 <span className="mt-0.5 text-xs font-semibold text-gs-ice group-hover:text-gs-cyan">{tr(prev.title, lang)}</span>
               </Link>
             ) : (
@@ -166,12 +169,12 @@ export function TheoryChapterPage() {
             )}
             {next ? (
               <Link to={`/teori/${meta.id}/${next.id}`} className="group flex flex-col text-left sm:text-right">
-                <span className="text-[10px] font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.next, lang)}</span>
+                <span className="text-xs font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.next, lang)}</span>
                 <span className="mt-0.5 text-xs font-semibold text-gs-ice group-hover:text-gs-cyan">{tr(next.title, lang)}</span>
               </Link>
             ) : (
               <Link to={`/teori/${nextMethod.id}/${theoryByMethod[nextMethod.id].chapters[0].id}`} className="group flex flex-col text-left sm:text-right">
-                <span className="text-[10px] font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.nextMethod, lang)}</span>
+                <span className="text-xs font-semibold tracking-wider text-gs-mist uppercase">{tr(site.chapterPage.nextMethod, lang)}</span>
                 <span className="mt-0.5 text-xs font-semibold text-gs-ice group-hover:text-gs-cyan">
                   {d.methods.list[nextMethod.id].name}
                 </span>

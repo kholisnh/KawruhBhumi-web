@@ -7,6 +7,8 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
 import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
 import { MagBodiesPanel, MagMapPanel, MagModelPanel, MagProfilePanel, MagSurveyPanel, MagSummaryPanel } from '../components/workspace/magnetic/MagParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
 import { useI18n } from '../i18n'
@@ -27,10 +29,14 @@ function displayDepth(input: MagInput): number {
 
 export function MagneticWorkspace() {
   const { d } = useI18n()
+  const shared = useSharedScenario<MagInput>('magnetic')
   const t = d.mag
   const s = useForwardState<MagInput, MagResult, MagScenarioId>({
     scenarios: magScenarios,
-    initialScenario: 'steelTank',
+    initialScenario: (shared?.scenarioId as MagScenarioId | undefined) ?? 'steelTank',
+    initialInput: shared?.input,
+    autoRun: true,
+    storageKey: 'kb.scenario.magnetic',
     scenarioInput: useCallback((id: MagScenarioId) => magScenarioToInput(magScenarios.find((x) => x.id === id) ?? magScenarios[0]), []),
     validate: validateMagnetic,
     run: runMagneticForward,
@@ -104,6 +110,7 @@ export function MagneticWorkspace() {
           <Button variant="secondary" onClick={s.resetModel}>
             {d.wshared.resetModel}
           </Button>
+          <ShareButton methodId="magnetic" scenarioId={s.scenarioId} input={s.input} />
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
           <Button variant="secondary" size="sm" onClick={handleExportCsv} disabled={!s.result}>
             {d.wshared.exportCsv}
@@ -145,7 +152,7 @@ export function MagneticWorkspace() {
             title={t.profileTitle}
             actions={
               s.result ? (
-                <span className="gs-number text-[10.5px] text-gs-mist">
+                <span className="gs-number text-xs text-gs-mist">
                   {d.wshared.stations}: {fmt(s.result.diagnostics.nStations, 0)}
                 </span>
               ) : undefined

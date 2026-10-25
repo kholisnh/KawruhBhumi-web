@@ -14,7 +14,7 @@ export function DisclaimerPage() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {copy.points.map((point, index) => (
           <Card key={tr(point.title, lang)} className="p-5">
-            <span className="gs-number text-[11px] font-semibold text-gs-cyan">0{index + 1}</span>
+            <span className="gs-number text-xs font-semibold text-gs-cyan">0{index + 1}</span>
             <h2 className="mt-1.5 text-sm font-semibold text-gs-ice">{tr(point.title, lang)}</h2>
             <p className="mt-1.5 text-xs leading-relaxed text-gs-mist">{tr(point.body, lang)}</p>
           </Card>
@@ -40,7 +40,7 @@ export function DisclaimerPage() {
           </svg>
           {copy.email}
         </a>
-        <p className="mt-4 text-[11px] text-gs-mist/80">{tr(copy.thanks, lang)}</p>
+        <p className="mt-4 text-xs text-gs-mist/80">{tr(copy.thanks, lang)}</p>
       </Card>
     </div>
   )

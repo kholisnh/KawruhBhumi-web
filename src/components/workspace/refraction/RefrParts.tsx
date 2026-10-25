@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { Data, Layout } from 'plotly.js'
 import { useI18n } from '../../../i18n'
+import { useFieldHelp } from '../../../content/fieldHelp'
 import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { RefrInput, RefrLayer, RefrResult, RefrSurvey } from '../../../sim/refraction/types'
@@ -19,13 +20,14 @@ const ACCENT = '#252525'
 
 export function RefrSurveyPanel({ survey, errors, errDict, patch }: { survey: RefrSurvey; errors: FieldError[]; errDict: Record<string, string>; patch: (p: Partial<RefrSurvey>) => void }) {
   const { d } = useI18n()
+  const help = useFieldHelp()
   const t = d.refr
   const errFor = useWsErrorFor(errors, errDict)
   return (
     <Panel title={t.surveyTitle}>
       <div className="grid grid-cols-2 gap-3">
-        <NumberField label={t.spread} unit="m" value={survey.spreadLength} onChange={(v) => patch({ spreadLength: v })} error={errFor('survey.spreadLength')} />
-        <NumberField label={d.wshared.spacing} unit="m" value={survey.geophoneSpacing} onChange={(v) => patch({ geophoneSpacing: v })} error={errFor('survey.geophoneSpacing')} />
+        <NumberField label={t.spread} unit="m" value={survey.spreadLength} onChange={(v) => patch({ spreadLength: v })} error={errFor('survey.spreadLength')} help={help('refr.offset')} />
+        <NumberField label={d.wshared.spacing} unit="m" value={survey.geophoneSpacing} onChange={(v) => patch({ geophoneSpacing: v })} error={errFor('survey.geophoneSpacing')} help={help('refr.spacing')} />
         <NumberField label={d.wshared.noise} unit="ms" value={survey.noiseMs} onChange={(v) => patch({ noiseMs: v })} error={errFor('survey.noiseMs')} />
         <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
         <NumberField label={t.freq} unit="Hz" value={survey.waveletFreqHz} onChange={(v) => patch({ waveletFreqHz: v })} error={errFor('survey.waveletFreqHz')} />
@@ -62,9 +64,9 @@ export function RefrLayersPanel({
           return (
             <div key={layer.id} className="rounded-lg border border-gs-raised/70 bg-gs-deep/40 p-3">
               <div className="mb-2 flex items-center gap-2">
-                <span className="gs-number text-[10.5px] text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
+                <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > 2 && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-[11px] text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
                     {t.removeLayer}
                   </button>
                 )}
@@ -315,7 +317,7 @@ export function RefrSeismogramPanel({
       ) : (
         plot && <Plot data={plot.data} layout={plot.layout} onReady={onReady} style={{ minHeight: height }} />
       )}
-      <p className="mt-1 text-[10.5px] leading-relaxed text-gs-mist">{t.seismogramNote}</p>
+      <p className="mt-1 text-xs leading-relaxed text-gs-mist">{t.seismogramNote}</p>
     </div>
   )
 }
@@ -340,7 +342,7 @@ export function RefrSummaryPanel({ result, errDict, input }: { result: RefrResul
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-gs-raised/70 text-[10px] uppercase tracking-wide text-gs-mist">
+              <tr className="border-b border-gs-raised/70 text-xs uppercase tracking-wide text-gs-mist">
                 <th className="py-1.5 pr-3 font-medium">{t.branch}</th>
                 <th className="py-1.5 pr-3 font-medium">{t.interfaceDepth}</th>
                 <th className="py-1.5 pr-3 font-medium">{t.velocity}</th>
@@ -351,7 +353,7 @@ export function RefrSummaryPanel({ result, errDict, input }: { result: RefrResul
             </thead>
             <tbody>
               {result.branches.map((b) => (
-                <tr key={b.index} className="border-b border-gs-raised/40 text-[11.5px] text-gs-ice">
+                <tr key={b.index} className="border-b border-gs-raised/40 text-xs text-gs-ice">
                   <td className="py-1.5 pr-3">{b.index === 0 ? t.direct : `${t.refractor} ${b.index}`}</td>
                   <td className="gs-number py-1.5 pr-3">{b.interfaceIndex === null ? '—' : `${fmt(tops[b.interfaceIndex + 1] ?? 0, 1)} m`}</td>
                   <td className="gs-number py-1.5 pr-3">{fmt(b.velocity, 0)} m/s</td>
@@ -363,7 +365,7 @@ export function RefrSummaryPanel({ result, errDict, input }: { result: RefrResul
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{t.branchesNote}</p>
+        <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.branchesNote}</p>
       </Panel>
       <WsWarningList warnings={dg.warnings} dict={errDict} />
     </div>

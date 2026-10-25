@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { Data, Layout } from 'plotly.js'
 import { useI18n } from '../../../i18n'
+import { useFieldHelp } from '../../../content/fieldHelp'
 import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { VesInput, VesLayerInput, VesResult, VesSurvey } from '../../../sim/resistivity/model'
@@ -45,6 +46,7 @@ export function VesSurveyPanel({
   setArray: (value: VesArrayType) => void
 }) {
   const { d } = useI18n()
+  const help = useFieldHelp()
   const t = d.ves
   const errFor = useWsErrorFor(errors, errDict)
   return (
@@ -53,6 +55,7 @@ export function VesSurveyPanel({
         label={t.array}
         value={array}
         onChange={setArray}
+        help={help('ves.array')}
         options={[
           { value: 'wenner', label: t.arrayWenner },
           { value: 'schlumberger', label: t.arraySchlumberger },
@@ -60,7 +63,7 @@ export function VesSurveyPanel({
       />
       <div className="mt-3 grid grid-cols-2 gap-3">
         <NumberField label={t.spacingMin} unit="m" value={survey.spacingMinM} onChange={(v) => patch({ spacingMinM: v })} error={errFor('survey.spacingMinM')} />
-        <NumberField label={t.spacingMax} unit="m" value={survey.spacingMaxM} onChange={(v) => patch({ spacingMaxM: v })} error={errFor('survey.spacingMaxM')} />
+        <NumberField label={t.spacingMax} unit="m" value={survey.spacingMaxM} onChange={(v) => patch({ spacingMaxM: v })} error={errFor('survey.spacingMaxM')} help={help('ves.spacing')} />
         <NumberField label={t.spacingCount} value={survey.spacingCount} onChange={(v) => patch({ spacingCount: Math.round(v) })} step={1} error={errFor('survey.spacingCount')} />
         <NumberField
           label={t.mnHalf}
@@ -73,7 +76,7 @@ export function VesSurveyPanel({
         <NumberField label={t.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
         <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
-      <p className="mt-1 text-[10px] leading-relaxed text-gs-mist/80">{array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
+      <p className="mt-1 text-xs leading-relaxed text-gs-mist/80">{array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -106,9 +109,9 @@ export function VesLayersPanel({
             <div key={layer.id} className="rounded-lg border border-gs-raised/70 bg-gs-deep/40 p-3">
               <div className="mb-2 flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full border border-black/10" style={{ backgroundColor: rhoFill(layer.resistivityOhmM) }} aria-hidden />
-                <span className="gs-number text-[10.5px] text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
+                <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > VES_LIMITS.minLayers && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-[11px] text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
                     {t.removeLayer}
                   </button>
                 )}
@@ -129,7 +132,7 @@ export function VesLayersPanel({
           )
         })}
       </div>
-      <p className="mt-2 text-[10px] leading-relaxed text-gs-mist/80">{t.layersNote}</p>
+      <p className="mt-2 text-xs leading-relaxed text-gs-mist/80">{t.layersNote}</p>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -230,7 +233,7 @@ export function VesModelSvg({ input, height = 330 }: { input: VesInput; height?:
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label={t.modelTitle}>
-      <text x={G.left} y={20} fontSize={11} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
+      <text x={G.left} y={20} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
         {t.modelTitle}
       </text>
 
@@ -240,10 +243,10 @@ export function VesModelSvg({ input, height = 330 }: { input: VesInput; height?:
           <g key={el.label}>
             <line x1={el.x} y1={58} x2={el.x} y2={G.top} stroke={isCurrent ? ACCENT : '#252525'} strokeWidth={isCurrent ? 2 : 1.4} />
             <rect x={el.x - 5} y={54} width={10} height={8} rx={1.5} fill={isCurrent ? ACCENT : '#252525'} />
-            <text x={el.x} y={48} textAnchor="middle" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={isCurrent ? ACCENT : '#252525'}>
+            <text x={el.x} y={48} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={isCurrent ? ACCENT : '#252525'}>
               {el.label}
             </text>
-            <text x={el.x} y={76} textAnchor="middle" fontSize={9} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
+            <text x={el.x} y={76} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
               {i < 2 ? (input.array === 'wenner' ? 'I' : i === 0 ? 'I' : 'V') : input.array === 'wenner' ? 'V' : i === 2 ? 'V' : 'I'}
             </text>
           </g>
@@ -278,12 +281,12 @@ export function VesModelSvg({ input, height = 330 }: { input: VesInput; height?:
           <g key={layer.id}>
             <rect x={G.left} y={y} width={plotW} height={Math.max(h, 0)} fill={rhoFill(layer.resistivityOhmM)} stroke="rgba(37,37,37,0.18)" strokeWidth={0.8} />
             {h > 26 && (
-              <text x={G.left + 10} y={y + 16} fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill="#252525">
+              <text x={G.left + 10} y={y + 16} fontSize={12} fontFamily="JetBrains Mono, monospace" fill="#252525">
                 {fmt(layer.resistivityOhmM, 3)} Ω·m
               </text>
             )}
             {!isHalf && (
-              <text x={G.left + plotW - 10} y={yScale(bottom) - 6} textAnchor="end" fontSize={9.5} fontFamily="JetBrains Mono, monospace" fill="rgba(37,37,37,0.65)">
+              <text x={G.left + plotW - 10} y={yScale(bottom) - 6} textAnchor="end" fontSize={12} fontFamily="JetBrains Mono, monospace" fill="rgba(37,37,37,0.65)">
                 z = {fmt(bottom, 2)} m
               </text>
             )}
@@ -293,13 +296,13 @@ export function VesModelSvg({ input, height = 330 }: { input: VesInput; height?:
 
       <line x1={G.left} y1={G.top} x2={G.left + plotW} y2={G.top} stroke="#252525" strokeWidth={1.8} />
       <line x1={G.left} y1={G.top} x2={G.left} y2={G.top + plotH} stroke="rgba(37,37,37,0.35)" strokeWidth={1} />
-      <text x={G.left - 8} y={G.top + plotH / 2} textAnchor="middle" fontSize={9.5} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} transform={`rotate(-90 ${G.left - 8} ${G.top + plotH / 2})`}>
+      <text x={G.left - 8} y={G.top + plotH / 2} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} transform={`rotate(-90 ${G.left - 8} ${G.top + plotH / 2})`}>
         {d.wshared.depth} [m]
       </text>
       {[0, 0.25, 0.5, 0.75, 1].map((f) => (
         <g key={f}>
           <line x1={G.left - 4} y1={yScale(f * displayDepth)} x2={G.left} y2={yScale(f * displayDepth)} stroke="rgba(37,37,37,0.35)" />
-          <text x={G.left - 8} y={yScale(f * displayDepth) + 3} textAnchor="end" fontSize={9} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
+          <text x={G.left - 8} y={yScale(f * displayDepth) + 3} textAnchor="end" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
             {Number((f * displayDepth).toFixed(1))}
           </text>
         </g>
@@ -326,13 +329,13 @@ export function VesSummaryPanel({ result, input }: { result: VesResult; input: V
           <Stat label={t.totalDepth} value={fmt(result.totalDepthM, 2)} unit="m" />
           <Stat label={t.apparentRange} value={`${fmt(result.minRhoOhmM, 2)} – ${fmt(result.maxRhoOhmM, 2)}`} unit="Ω·m" />
         </div>
-        <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{input.array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
+        <p className="mt-2 text-xs leading-relaxed text-gs-mist">{input.array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
       </Panel>
       <Panel title={t.layersTable}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[480px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-gs-raised/70 text-[10px] uppercase tracking-wide text-gs-mist">
+              <tr className="border-b border-gs-raised/70 text-xs uppercase tracking-wide text-gs-mist">
                 <th className="py-1.5 pr-3 font-medium">{t.layerN}</th>
                 <th className="py-1.5 pr-3 font-medium">ρ [Ω·m]</th>
                 <th className="py-1.5 pr-3 font-medium">{t.thickness}</th>
@@ -345,7 +348,7 @@ export function VesSummaryPanel({ result, input }: { result: VesResult; input: V
                 const top = tops[i]
                 const bottom = isHalf ? null : tops[i + 1]
                 return (
-                  <tr key={layer.id} className="border-b border-gs-raised/40 text-[11.5px] text-gs-ice">
+                  <tr key={layer.id} className="border-b border-gs-raised/40 text-xs text-gs-ice">
                     <td className="py-1.5 pr-3">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</td>
                     <td className="gs-number py-1.5 pr-3">
                       <span className="mr-2 inline-block h-2 w-2 rounded-full border border-black/10 align-middle" style={{ backgroundColor: rhoFill(layer.resistivityOhmM) }} />
@@ -361,7 +364,7 @@ export function VesSummaryPanel({ result, input }: { result: VesResult; input: V
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{t.equivalenceNote}</p>
+        <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.equivalenceNote}</p>
       </Panel>
     </div>
   )

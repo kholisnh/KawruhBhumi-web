@@ -7,6 +7,8 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
 import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
 import { RefrLayersPanel, RefrModelPanel, RefrSeismogramPanel, RefrSummaryPanel, RefrSurveyPanel, RefrTravelTimePlot } from '../components/workspace/refraction/RefrParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
 import { useI18n } from '../i18n'
@@ -17,10 +19,14 @@ import { validateRefraction } from '../sim/refraction/validate'
 
 export function RefractionWorkspace() {
   const { d } = useI18n()
+  const shared = useSharedScenario<RefrInput>('refraction')
   const t = d.refr
   const s = useForwardState<RefrInput, RefrResult, RefrScenarioId>({
     scenarios: refrScenarios,
-    initialScenario: 'soilBedrock',
+    initialScenario: (shared?.scenarioId as RefrScenarioId | undefined) ?? 'soilBedrock',
+    initialInput: shared?.input,
+    autoRun: true,
+    storageKey: 'kb.scenario.refraction',
     scenarioInput: useCallback((id: RefrScenarioId) => refrScenarioToInput(refrScenarios.find((x) => x.id === id) ?? refrScenarios[0]), []),
     validate: validateRefraction,
     run: runRefractionForward,
@@ -87,6 +93,7 @@ export function RefractionWorkspace() {
           <Button variant="secondary" onClick={s.resetModel}>
             {d.wshared.resetModel}
           </Button>
+          <ShareButton methodId="refraction" scenarioId={s.scenarioId} input={s.input} />
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
           <Button variant="secondary" size="sm" onClick={handleExportCsv} disabled={!s.result}>
             {d.wshared.exportCsv}

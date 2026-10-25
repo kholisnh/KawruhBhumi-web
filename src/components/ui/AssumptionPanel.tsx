@@ -23,7 +23,7 @@ export function AssumptionPanel({ title, items, footer, className = '' }: Assump
           </li>
         ))}
       </ul>
-      {footer && <div className="mt-3 border-t border-gs-amber/20 pt-2.5 text-[11px] leading-relaxed text-gs-mist/90">{footer}</div>}
+      {footer && <div className="mt-3 border-t border-gs-amber/20 pt-2.5 text-xs leading-relaxed text-gs-mist/90">{footer}</div>}
     </div>
   )
 }

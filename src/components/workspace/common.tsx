@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode, SetStateAction } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../../i18n'
@@ -7,6 +7,10 @@ import type { FieldError } from '../../sim/core/fieldError'
 import { methodById, type MethodId } from '../../content/methods'
 import { Badge } from '../ui/Badge'
 import { Panel } from '../ui/Card'
+import { MethodSwitcher } from './MethodSwitcher'
+import { ReportPanel } from './ReportPanel'
+import { GuidedExperiments } from './GuidedExperiments'
+import { ReadResultCard } from './ReadResultCard'
 
 /* ------------------------------------------------------------------ */
 /* Generic forward-run state (shared by all four Phase-2 workspaces)   */
@@ -32,10 +36,23 @@ export function useForwardState<TInput, TResult, S extends string>(opts: {
   validate: (input: TInput) => FieldError[]
   run: (input: TInput) => TResult
   clone: (input: TInput) => TInput
+  initialInput?: TInput
+  /** Persist the last selected scenario id under this key. */
+  storageKey?: string
+  /** Run the default scenario once after mount (workspace default). */
+  autoRun?: boolean
 }): ForwardStateApi<TInput, TResult, S> {
-  const { scenarios, initialScenario, scenarioInput, validate, run: runSolver, clone } = opts
-  const [scenarioId, setScenarioId] = useState<S>(initialScenario)
-  const [input, setInput] = useState<TInput>(() => scenarioInput(initialScenario))
+  const { scenarios, initialScenario, scenarioInput, validate, run: runSolver, clone, initialInput, storageKey, autoRun = false } = opts
+  const [scenarioId, setScenarioId] = useState<S>(() => {
+    if (initialInput || !storageKey || typeof window === 'undefined') return initialScenario
+    try {
+      const stored = localStorage.getItem(storageKey)
+      return scenarios.some((s) => s.id === stored) ? (stored as S) : initialScenario
+    } catch {
+      return initialScenario
+    }
+  })
+  const [input, setInput] = useState<TInput>(() => (initialInput ? clone(initialInput) : scenarioInput(scenarioId)))
   const [result, setResult] = useState<TResult | null>(null)
   const [lastRunJson, setLastRunJson] = useState<string | null>(null)
 
@@ -47,11 +64,18 @@ export function useForwardState<TInput, TResult, S extends string>(opts: {
   const loadScenario = useCallback(
     (id: S) => {
       setScenarioId(id)
+      if (storageKey) {
+        try {
+          localStorage.setItem(storageKey, id)
+        } catch {
+          /* storage may be unavailable */
+        }
+      }
       setInput(scenarioInput(id))
       setLastRunJson(null)
       setResult(null)
     },
-    [scenarioInput],
+    [scenarioInput, storageKey],
   )
 
   const run = useCallback(() => {
@@ -70,6 +94,17 @@ export function useForwardState<TInput, TResult, S extends string>(opts: {
     setLastRunJson(null)
     setResult(null)
   }, [scenarioId, scenarioInput])
+
+  const runRef = useRef(run)
+  useEffect(() => {
+    runRef.current = run
+  }, [run])
+  const autoRan = useRef(false)
+  useEffect(() => {
+    if (!autoRun || autoRan.current) return
+    autoRan.current = true
+    runRef.current()
+  }, [autoRun])
 
   return { input, result, errors, dirty, scenarioId, scenarioIds, setInput, loadScenario, run, resetModel }
 }
@@ -98,16 +133,16 @@ export function WsErrorList({ errors, dict }: { errors: FieldError[]; dict: Reco
   const shared = d.wshared.errors as unknown as Record<string, string>
   return (
     <div className="rounded-lg border border-gs-danger/40 bg-gs-danger/8 px-3 py-2">
-      <p className="text-[11px] font-semibold text-gs-danger">
+      <p className="text-xs font-semibold text-gs-danger">
         {d.common.errorsTitle} ({errors.length})
       </p>
       <ul className="mt-1 space-y-0.5">
         {errors.slice(0, 8).map((e, i) => (
-          <li key={`${e.path}-${i}`} className="gs-number text-[10.5px] text-gs-danger/90">
+          <li key={`${e.path}-${i}`} className="gs-number text-xs text-gs-danger/90">
             {e.path} — {fillTemplate(dict[e.key] ?? shared[e.key] ?? e.key, e.params ?? {})}
           </li>
         ))}
-        {errors.length > 8 && <li className="text-[10.5px] text-gs-danger/80">…</li>}
+        {errors.length > 8 && <li className="text-xs text-gs-danger/80">…</li>}
       </ul>
     </div>
   )
@@ -144,6 +179,8 @@ export function WorkspaceShell({ methodId, badge, title, subtitle, solverNote, t
         <span className="text-gs-ice">{info.abbr}</span>
       </nav>
 
+      <MethodSwitcher active={methodId} />
+
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-gs-ice">{title}</h1>
@@ -152,22 +189,39 @@ export function WorkspaceShell({ methodId, badge, title, subtitle, solverNote, t
           </Badge>
         </div>
         <p className="mt-1.5 max-w-4xl text-sm leading-relaxed text-gs-mist">{subtitle}</p>
-        <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-gs-mist/85">{solverNote}</p>
+        <p className="mt-2 max-w-4xl text-xs leading-relaxed text-gs-mist/85">{solverNote}</p>
       </header>
 
-      <Panel compact className="mb-5">
-        <div className="flex flex-wrap items-center gap-2.5">
-          {toolbar}
-          {status && <span className="ml-auto text-[11px]">{status}</span>}
-        </div>
-      </Panel>
+      <div className="no-print sticky top-16 z-30 mb-5 rounded-2xl bg-gs-navy/90 p-1 backdrop-blur lg:static lg:bg-transparent lg:p-0">
+        <Panel compact>
+          <div className="mb-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold tracking-wide text-gs-mist uppercase">
+            <span className="rounded-full bg-gs-cyan/10 px-2 py-0.5 text-gs-cyan">1 · {d.wshared.stepModel}</span>
+            <span aria-hidden>→</span>
+            <span className="rounded-full bg-gs-deep px-2 py-0.5">2 · {d.wshared.stepRun}</span>
+            <span aria-hidden>→</span>
+            <span className="rounded-full bg-gs-deep px-2 py-0.5">3 · {d.wshared.stepRead}</span>
+            <span className="ml-1 hidden font-normal normal-case tracking-normal text-gs-mist sm:inline">{d.wshared.stepHint}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            {toolbar}
+            {status && <span className="ml-auto text-xs">{status}</span>}
+          </div>
+        </Panel>
+      </div>
 
-      <div className="grid gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
-        <div className="space-y-5">{left}</div>
-        <div className="space-y-5">{right}</div>
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-5">{left}</div>
+        <div className="min-w-0 space-y-5">
+          {right}
+          <ReadResultCard methodId={methodId} />
+        </div>
       </div>
 
       {bottom && <div className="mt-6 space-y-5">{bottom}</div>}
+      <div className="mt-6 space-y-5">
+        <GuidedExperiments methodId={methodId} />
+        <ReportPanel />
+      </div>
     </div>
   )
 }
@@ -184,12 +238,12 @@ export function WsWarningList({ warnings, dict }: { warnings: Array<{ key: strin
   const shared = d.wshared.errors as unknown as Record<string, string>
   return (
     <div className="rounded-lg border border-gs-amber/40 bg-gs-amber/8 px-3 py-2">
-      <p className="text-[11px] font-semibold text-gs-amber">
+      <p className="text-xs font-semibold text-gs-amber">
         {d.common.warningsTitle} ({warnings.length})
       </p>
       <ul className="mt-1 space-y-0.5">
         {warnings.map((w, i) => (
-          <li key={`${w.key}-${i}`} className="text-[10.5px] leading-relaxed text-gs-amber/90">
+          <li key={`${w.key}-${i}`} className="text-xs leading-relaxed text-gs-amber/90">
             {fillTemplate(dict[w.key] ?? shared[w.key] ?? w.key, w.params)}
           </li>
         ))}

@@ -25,10 +25,19 @@ import {
 } from '../components/workspace/gpr/GprPanels'
 import { AScanPlot, RadargramPlot } from '../components/workspace/gpr/plots'
 import { useGprState } from '../components/workspace/gpr/useGprState'
+import { MethodSwitcher } from '../components/workspace/MethodSwitcher'
+import { ReportPanel } from '../components/workspace/ReportPanel'
+import { GuidedExperiments } from '../components/workspace/GuidedExperiments'
+import { ReadResultCard } from '../components/workspace/ReadResultCard'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
+import type { GprInput } from '../sim/gpr/types'
+import type { ScenarioId } from '../sim/gpr/model'
 
 export function GprWorkspace() {
   const { d } = useI18n()
-  const s = useGprState()
+  const shared = useSharedScenario<GprInput>('gpr')
+  const s = useGprState((shared?.scenarioId as ScenarioId | undefined) ?? 'sandBedrock', { initialInput: shared?.input, autoRun: true, storageKey: 'kb.scenario.gpr' })
   const errorFor = useErrorFor(s.errors)
   const [showGrid, setShowGrid] = useState(true)
   const [showUnits, setShowUnits] = useState(true)
@@ -69,6 +78,8 @@ export function GprWorkspace() {
         <span className="text-gs-ice">{d.methods.list.gpr.abbr}</span>
       </nav>
 
+      <MethodSwitcher active="gpr" />
+
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-gs-ice">{d.ws.title}</h1>
@@ -77,10 +88,18 @@ export function GprWorkspace() {
           </Badge>
         </div>
         <p className="mt-1.5 max-w-4xl text-sm leading-relaxed text-gs-mist">{d.ws.subtitle}</p>
-        <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-gs-mist/85">{d.ws.solverNote}</p>
+        <p className="mt-2 max-w-4xl text-xs leading-relaxed text-gs-mist/85">{d.ws.solverNote}</p>
       </header>
 
-      <Panel compact className="mb-5">
+      <div className="no-print sticky top-16 z-30 mb-5 rounded-2xl bg-gs-navy/90 p-1 backdrop-blur lg:static lg:bg-transparent lg:p-0">
+      <Panel compact>
+        <div className="mb-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold tracking-wide text-gs-mist uppercase">
+          <span className="rounded-full bg-gs-cyan/10 px-2 py-0.5 text-gs-cyan">1 · {d.wshared.stepModel}</span>
+          <span aria-hidden>→</span>
+          <span className="rounded-full bg-gs-deep px-2 py-0.5">2 · {d.wshared.stepRun}</span>
+          <span aria-hidden>→</span>
+          <span className="rounded-full bg-gs-deep px-2 py-0.5">3 · {d.wshared.stepRead}</span>
+        </div>
         <div className="flex flex-wrap items-center gap-2.5">
           <Button variant="primary" onClick={s.run}>
             {d.ws.runSim}
@@ -109,22 +128,24 @@ export function GprWorkspace() {
             {d.ws.exportPng} — A-scan
           </Button>
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
+          <ShareButton methodId="gpr" scenarioId={s.scenarioId} input={s.input} />
           <Toggle label={d.ws.showGrid} checked={showGrid} onChange={setShowGrid} />
           <Toggle label={d.ws.showUnits} checked={showUnits} onChange={setShowUnits} />
-          <span className="ml-auto text-[11px]">
+          <span className="ml-auto text-xs">
             {s.result && !s.dirty && <span className="text-gs-teal">{d.ws.current}</span>}
             {s.result && s.dirty && <span className="text-gs-amber">{d.ws.stale}</span>}
           </span>
         </div>
         {s.runError && s.runError !== 'validation' && (
-          <p className="mt-2 rounded-lg border border-gs-danger/40 bg-gs-danger/8 px-3 py-2 text-[11px] text-gs-danger">
+          <p className="mt-2 rounded-lg border border-gs-danger/40 bg-gs-danger/8 px-3 py-2 text-xs text-gs-danger">
             {s.runError}
           </p>
         )}
       </Panel>
+      </div>
 
-      <div className="grid gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
-        <div className="space-y-5">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-5">
           <Panel title={d.ws.scenario} compact>
             <ScenarioSelect value={s.scenarioId} onChange={s.loadScenario} />
           </Panel>
@@ -152,7 +173,7 @@ export function GprWorkspace() {
           <ErrorList errors={s.errors} />
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <Panel title={d.ws.crossSection}>
             <GeoCrossSection
               layers={s.input.model.layers}
@@ -174,7 +195,7 @@ export function GprWorkspace() {
           <Panel
             title={d.ws.radargram}
             actions={
-              <span className="gs-number text-[10.5px] text-gs-mist">
+              <span className="gs-number text-xs text-gs-mist">
                 {d.ws.trace} x = {fmt(selectedX, 3)} m
               </span>
             }
@@ -184,7 +205,7 @@ export function GprWorkspace() {
             ) : (
               <>
                 {s.dirty && (
-                  <p className="mb-3 rounded-lg border border-gs-amber/40 bg-gs-amber/8 px-3 py-2 text-[11px] text-gs-amber">
+                  <p className="mb-3 rounded-lg border border-gs-amber/40 bg-gs-amber/8 px-3 py-2 text-xs text-gs-amber">
                     {d.ws.stale}
                   </p>
                 )}
@@ -248,6 +269,9 @@ export function GprWorkspace() {
           <WorkspacePipeline />
         </Panel>
         <AssumptionPanel title={d.ws.assumptionsTitle} items={d.ws.assumptions} footer={d.ws.depthConversion} />
+        <ReadResultCard methodId="gpr" />
+        <GuidedExperiments methodId="gpr" />
+        <ReportPanel />
       </div>
     </div>
   )

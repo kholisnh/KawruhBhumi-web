@@ -52,6 +52,22 @@ python3 -m http.server 8080 --directory dist
 Buka <http://localhost:8080>. Jika halaman muncul dan simulator berjalan,
 build sudah benar.
 
+### 1.1 Single-file HTML (opsional)
+
+Untuk distribusi satu berkas:
+
+```bash
+npm run build:single
+```
+
+Hasilnya adalah **`dist-single/index.html`** dengan seluruh JavaScript, CSS, dan
+font di dalamnya. Worker inversi HVSR juga di-inline, jadi tidak ada berkas
+worker terpisah. Sajikan tetap lewat server lokal:
+
+```bash
+python3 -m http.server 8080 --directory dist-single
+```
+
 > Jangan membuka `dist/index.html` dengan klik dua kali. Browser modern
 > memblokir modul JavaScript dari `file://`, sehingga halaman akan kosong.
 > Selalu lewat server (contoh di atas) atau hosting.
@@ -65,7 +81,7 @@ Jika proyek belum berupa repositori Git:
 ```bash
 git init
 git add .
-git commit -m "KawruhBhumi Lab v2.1"
+git commit -m "KawruhBhumi Lab"
 git branch -M main
 ```
 
@@ -208,7 +224,7 @@ akademik, subdomain seperti `kawruhbhumi.namakampus.ac.id` juga bisa.
 
 - [ ] `npx tsc -b`, `npm run lint`, `npm test` lulus.
 - [ ] `npm run build` selesai tanpa error.
-- [ ] Halaman utama, `#/metode`, `#/teori`, dan keenam simulator terbuka.
+- [ ] Halaman utama, `#/metode`, `#/teori`, dan ketujuh simulator terbuka.
 - [ ] Toggle EN/ID berfungsi dan bertahan setelah refresh.
 - [ ] Ekspor CSV/PNG berfungsi di workspace.
 - [ ] Tautan `#/disclaimer` dan alamat email tampil.

@@ -1,5 +1,6 @@
 import type { MethodId } from '../methods'
 import type { Bilingual } from '../site'
+import type { FigureId } from '../cases'
 
 export type TheoryBlock =
   | { kind: 'p'; text: Bilingual }
@@ -7,6 +8,7 @@ export type TheoryBlock =
   | { kind: 'eq'; latex: string; caption?: Bilingual }
   | { kind: 'list'; items: Bilingual[] }
   | { kind: 'note'; title: Bilingual; text: Bilingual }
+  | { kind: 'figure'; figureId: FigureId }
 
 export interface TheoryChapter {
   id: string
@@ -37,3 +39,4 @@ export const note = (titleEn: string, titleId: string, en: string, id: string): 
   title: { en: titleEn, id: titleId },
   text: { en, id },
 })
+export const figure = (figureId: FigureId): TheoryBlock => ({ kind: 'figure', figureId })

@@ -15,6 +15,7 @@ const GravityWorkspace = lazy(() => import('./pages/GravityWorkspace').then((m) 
 const ReflectionWorkspace = lazy(() => import('./pages/ReflectionWorkspace').then((m) => ({ default: m.ReflectionWorkspace })))
 const RefractionWorkspace = lazy(() => import('./pages/RefractionWorkspace').then((m) => ({ default: m.RefractionWorkspace })))
 const ResistivityWorkspace = lazy(() => import('./pages/ResistivityWorkspace').then((m) => ({ default: m.ResistivityWorkspace })))
+const HvsrWorkspace = lazy(() => import('./pages/HvsrWorkspace').then((m) => ({ default: m.HvsrWorkspace })))
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then((m) => ({ default: m.ResourcesPage })))
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage').then((m) => ({ default: m.DisclaimerPage })))
@@ -60,6 +61,7 @@ export function App() {
             <Route path="/simulator/reflection" element={<ReflectionWorkspace />} />
             <Route path="/simulator/refraction" element={<RefractionWorkspace />} />
             <Route path="/simulator/resistivity" element={<ResistivityWorkspace />} />
+            <Route path="/simulator/hvsr" element={<HvsrWorkspace />} />
             <Route path="/physics" element={<Navigate to="/teori" replace />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/about" element={<AboutPage />} />

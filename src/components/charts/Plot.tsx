@@ -34,8 +34,19 @@ export interface PlotProps {
   config?: Partial<Config>
   className?: string
   style?: CSSProperties
+  /** Accessible name announced by screen readers. */
+  ariaLabel?: string
   /** Called once after the first successful render (graph div is interactive). */
   onReady?: (el: HTMLDivElement, plotly: PlotlyModule) => void
+}
+
+function axisTitle(value: unknown): string {
+  if (typeof value === 'string') return value
+  if (value && typeof value === 'object' && 'text' in value) {
+    const text = (value as { text?: unknown }).text
+    if (typeof text === 'string') return text
+  }
+  return ''
 }
 
 /**
@@ -44,11 +55,34 @@ export interface PlotProps {
  * - ResizeObserver keeps charts responsive inside flex/grid layouts
  * - purge() on unmount only
  */
-export function Plot({ data, layout, config, className, style, onReady }: PlotProps) {
+export function Plot({ data, layout, config, className, style, ariaLabel, onReady }: PlotProps) {
   const ref = useRef<HTMLDivElement | null>(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const [ready, setReady] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
   const onReadyRef = useRef(onReady)
   const notifiedRef = useRef(false)
+
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === wrapRef.current)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
+  const toggleFullscreen = () => {
+    const el = wrapRef.current
+    if (!el) return
+    if (document.fullscreenElement) {
+      void document.exitFullscreen()
+    } else {
+      try {
+        const request = el.requestFullscreen?.()
+        if (request) void request.catch(() => undefined)
+      } catch {
+        /* fullscreen unavailable */
+      }
+    }
+  }
 
   useEffect(() => {
     onReadyRef.current = onReady
@@ -63,10 +97,12 @@ export function Plot({ data, layout, config, className, style, onReady }: PlotPr
       if (disposed) return
       setReady(true)
       observer = new ResizeObserver(() => {
+        if (!el.isConnected || el.getClientRects().length === 0) return
         try {
-          plotly.Plots.resize(el)
+          const resized = plotly.Plots.resize(el) as unknown as Promise<unknown> | undefined
+          if (resized && typeof resized.catch === 'function') void resized.catch(() => undefined)
         } catch {
-          /* element detached */
+          /* element detached or hidden */
         }
       })
       observer.observe(el)
@@ -98,9 +134,32 @@ export function Plot({ data, layout, config, className, style, onReady }: PlotPr
           notifiedRef.current = true
           onReadyRef.current(el, plotly)
         }
-      })
+      }).catch(() => undefined)
     })
   }, [ready, data, layout, config])
 
-  return <div ref={ref} className={className} style={{ minHeight: 200, ...style }} />
+  const axisLabel = [
+    axisTitle(layout?.yaxis && !Array.isArray(layout.yaxis) ? layout.yaxis.title : undefined),
+    axisTitle(layout?.xaxis && !Array.isArray(layout.xaxis) ? layout.xaxis.title : undefined),
+  ]
+    .filter(Boolean)
+    .join(' versus ')
+  const label = ariaLabel ?? (axisLabel || 'Interactive scientific chart')
+
+  return (
+    <div ref={wrapRef} className="gs-plot group relative">
+      <div ref={ref} role="img" aria-label={label} tabIndex={0} className={className} style={{ minHeight: 200, ...style }} />
+      <button
+        type="button"
+        onClick={toggleFullscreen}
+        className="gs-plot-fullscreen no-print absolute right-2 bottom-2 z-10 rounded-lg border border-black/10 bg-gs-panel/90 p-1.5 text-gs-mist shadow-sm transition-opacity hover:text-gs-cyan focus-visible:text-gs-cyan sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+        aria-label={fullscreen ? 'Exit chart fullscreen' : 'Open chart fullscreen'}
+        title={fullscreen ? 'Exit fullscreen' : 'Fullscreen chart'}
+      >
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+          {fullscreen ? <path d="M6 2v4H2M10 14v-4h4" /> : <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" />}
+        </svg>
+      </button>
+    </div>
+  )
 }

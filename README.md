@@ -4,13 +4,14 @@
 
 A bilingual (English / Indonesian) teaching platform for near-surface and
 exploration geophysics. The current build ships a light-first, multi-page
-interface, six chaptered theory libraries, and six validated **forward
+interface, seven chaptered theory libraries, and seven validated **forward
 workspaces**: Ground-Penetrating Radar, magnetics, gravity, seismic reflection,
-seismic refraction, and resistivity sounding (VES).
+seismic refraction, resistivity sounding (VES), and HVSR / microtremor.
 
-**Forward modelling only — no inversion is performed or implied anywhere.**
-Every synthetic result states its dimensionality, discretization, and
-approximation limits in a visible assumptions panel.
+**Forward modelling is the default.** The HVSR workspace adds one clearly
+labelled, bounded inversion experiment; no other method performs or implies
+inversion. Every synthetic result states its dimensionality, discretization,
+and approximation limits in a visible assumptions panel.
 
 ## Quick start
 
@@ -34,26 +35,28 @@ python3 -m http.server 8080 --directory dist
 Opening `dist/index.html` directly from disk does not work in modern browsers,
 because ES-module scripts are blocked on `file://` origins. The legacy
 single-file and Android builds can still be produced with `npm run build:single`
-and `npm run android:apk`; older artifacts in the D: mirror still carry the
-former GeoSim Lab name and APK package (`id.geosim.lab`).
+and `npm run android:apk`. The single-file build inlines the HVSR inversion
+worker so the workspace also runs from one HTML file. Older APK artifacts in the
+D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 
 ## Pages and routes
 
 | Route | Purpose |
 | --- | --- |
-| `#/` | Compact landing page: hero, three entry paths, six methods, disclaimer link |
-| `#/metode` | Method directory (six profiles, chapter counts, workspace links) |
+| `#/` | Compact landing page: hero, 60-second demo, three entry paths, seven methods, disclaimer link |
+| `#/metode` | Method directory (seven profiles, chapter counts, workspace links) |
 | `#/metode/:methodId` | Method story, measured property, typical uses, chapter list |
-| `#/teori` | Theory library index: five chapters per method (30 chapters total) |
+| `#/teori` | Theory library index: five chapters per method (35 chapters total) |
 | `#/teori/:methodId/:chapterId` | Chapter reader with KaTeX equations, SVG figures and prev/next navigation |
-| `#/simulator` | Workspace hub with six cards and the shared pipeline explanation |
+| `#/simulator` | Workspace hub with seven cards and the shared pipeline explanation |
 | `#/simulator/gpr` | GPR forward workspace |
 | `#/simulator/magnetic` | Magnetic forward workspace |
 | `#/simulator/gravity` | Gravity forward workspace |
 | `#/simulator/reflection` | Seismic reflection forward workspace |
 | `#/simulator/refraction` | Seismic refraction forward workspace |
 | `#/simulator/resistivity` | Resistivity sounding (VES) forward workspace |
-| `#/resources` | Searchable, filterable reference library (18 entries) |
+| `#/simulator/hvsr` | HVSR forward workspace + labelled 1D inversion experiment |
+| `#/resources` | Searchable reference library (29 entries), glossary and formula sheet |
 | `#/about` | Mission, scope, tech notes and key references |
 | `#/disclaimer` | Honest disclaimer, limitations and feedback address |
 | `#/physics` | Legacy anchor — redirects to `#/teori` |
@@ -87,7 +90,21 @@ former GeoSim Lab name and APK package (`id.geosim.lab`).
   resistivity curve, layered model/electrode SVG, layer table, and equivalence
   notes. The Hankel transform is integrated numerically with Gauss–Legendre
   quadrature.
-- **Reference library** — 18 curated textbooks, papers and open resources with
+- **HVSR / microtremor** — 1D layered SH-transfer proxy for the H/V curve,
+  fundamental-frequency diagnostics, quarter-wave estimate, higher-mode
+  warning, and a produce-and-invert workflow using a transparent neighbourhood
+  search. The inversion is labelled as bounded and non-unique. Preset scenario
+  cards, A/B comparison with a pinned snapshot, a one-factor sensitivity sweep,
+  and a guess-the-model challenge turn the workspace into a classroom exercise.
+- **Scenario tools** — permalink sharing for every workspace, auto-run defaults,
+  last-scenario memory, a persistent method switcher, a printable practice
+  report, and labelled “What am I seeing?” prompts beside the results.
+- **Guided learning** — 21 predict–run–observe experiments (three per method),
+  field-case figures, parameter help, a glossary, formula sheet, and downloadable
+  teacher worksheet/answer-key packs.
+- **Accessible charts** — named chart regions, keyboard-focusable plots,
+  fullscreen chart view, and print/reduced-motion styles.
+- **Reference library** — 29 curated textbooks, papers and open resources with
   search and filters by method and type.
 - **Bilingual** — full EN/ID interface; `src/i18n/id.ts` is type-checked to stay
   key-identical with `en.ts`. UI copy for the new pages lives in
@@ -103,10 +120,11 @@ former GeoSim Lab name and APK package (`id.geosim.lab`).
 | Seismic reflection | **ANALYTICAL (primaries only)** — impedance reflectivity, cumulative transmission ∏(1−R²), Ricker convolution, NMO moveout; no multiples, absorption or AVO. |
 | Seismic refraction | **ANALYTICAL (head waves)** — closed-form direct and head-wave branches, first-arrival envelope; no reflections, turning rays or attenuation; velocity inversions flagged. |
 | Resistivity (VES) | **NUMERICAL (1D layered earth)** — Stefanescu recursion for the resistivity transform, Gauss–Legendre quadrature of the Hankel integral with `J₀`; Wenner and Schlumberger geometric factors; no inversion, lateral changes, anisotropy or IP. |
+| HVSR | **APPROXIMATE (1D proxy) + bounded inversion** — layered SH transfer with fixed density and Vp/Vs; Nakamura-style H/V proxy, not full Rayleigh ellipticity. Inversion is a neighbourhood search inspired by Wathelet et al. (2004), not a Geopsy reimplementation. |
 
 ## Tests
 
-`npm test` runs 143 tests in 9 files; `npx tsc -b` and `npm run lint` are clean.
+`npm test` runs 156 tests in 10 files; `npx tsc -b` and `npm run lint` are clean.
 
 | Suite | File | Tests |
 | --- | --- | --- |
@@ -118,7 +136,8 @@ former GeoSim Lab name and APK package (`id.geosim.lab`).
 | Refraction | `src/sim/refraction/refraction.test.ts` | 18 |
 | Resistivity solver | `src/sim/resistivity/ves.test.ts` | 18 |
 | Resistivity workspace model | `src/sim/resistivity/model.test.ts` | 5 |
-| Pages | `src/smoke.test.tsx` | 16 |
+| HVSR | `src/sim/hvsr/hvsr.test.ts` | 12 |
+| Pages | `src/smoke.test.tsx` | 17 |
 
 The resistivity tests compare the numerical Hankel solution against closed-form
 two-layer Wenner and Schlumberger curves, check asymptotic limits, seeded noise,
@@ -136,7 +155,8 @@ src/
     reflection/        # 1D reflectivity, wavelet, gather/NMO
     refraction/        # head-wave travel times, crossover, depth estimate
     resistivity/       # VES types, Hankel solver, presets, validation, UI model
-  content/             # methods, physics, references, site copy, chaptered theory
+    hvsr/              # 1D SH-transfer proxy, peak diagnostics, bounded inversion
+  content/             # methods, physics, references, experiments, glossary, theory
   i18n/                # en.ts (source of truth) + id.ts (type-checked parity)
   components/
     charts/            # lazy Plotly wrapper, light theme, CSV/PNG export
@@ -144,13 +164,13 @@ src/
     geo/               # HeroScene, GeoCrossSection
     method/            # per-method glyphs (incl. resistivity electrode glyph)
     workspace/
-      common.tsx       # generic forward-run state + WorkspaceShell
+      common.tsx       # generic forward-run state + WorkspaceShell + share/report
       sections.tsx     # layered/body cross-sections
       resistivity/     # VES controls, curve, model SVG, summary
-      gpr/ magnetic/ gravity/ reflection/ refraction/
+      gpr/ magnetic/ gravity/ reflection/ refraction/ hvsr/
     layout/            # Navbar, Footer, Layout, error boundary
   pages/               # Landing, Methods, Method, Theory index/chapter, simulator
-                       # hub, six workspaces, Resources, About, Disclaimer, 404
+                       # hub, seven workspaces, Resources, About, Disclaimer, 404
 ```
 
 ## Design system
@@ -188,9 +208,13 @@ variables are required.
 
 - Phase 1: GPR workspace and initial libraries.
 - Phase 2: magnetic, gravity, reflection and refraction workspaces.
-- v2: light-first redesign, multi-page IA, chaptered theory for all six
-  methods, resistivity (VES) workspace, bilingual site copy, disclaimer.
-- v2.1 (current): KawruhBhumi Lab rebrand, new logo/favicons, bilingual
-  tagline, documentation refresh, and Android application ID update.
-- Later: FDTD GPR, elastic wavefield simulation, migration, and clearly-labelled
-  inversion experiments.
+- v2: light-first redesign, multi-page IA, chaptered theory for every method,
+  resistivity (VES) workspace, bilingual site copy, disclaimer.
+- v2.1: KawruhBhumi Lab rebrand, new logo/favicons, bilingual tagline,
+  documentation refresh, and Android application ID update.
+- v2.2 (current): HVSR workspace, seven method/case studies, guided experiments,
+  scenario permalinks, parameter help, printable report, glossary/formula sheet,
+  HVSR comparison/sweep/challenge tools, teacher downloads, chart accessibility,
+  and responsive layout fixes.
+- Later: FDTD GPR, elastic wavefield simulation, migration, and broader
+  clearly-labelled inversion experiments.

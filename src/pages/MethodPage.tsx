@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { CaseStudySection } from '../components/method/CaseStudyCard'
 import { MethodGlyph } from '../components/method/MethodGlyph'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -95,18 +96,20 @@ export function MethodPage() {
             {chapters.map((chapter, index) => (
               <li key={chapter.id}>
                 <Link to={`/teori/${meta.id}/${chapter.id}`} className="group flex items-start gap-3 py-3">
-                  <span className="gs-number mt-0.5 text-[11px] font-semibold text-gs-mist">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="gs-number mt-0.5 text-xs font-semibold text-gs-mist">{String(index + 1).padStart(2, '0')}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-medium text-gs-ice group-hover:text-gs-cyan">{tr(chapter.title, lang)}</span>
-                    <span className="mt-0.5 block text-[11px] leading-relaxed text-gs-mist">{tr(chapter.summary, lang)}</span>
+                    <span className="mt-0.5 block text-xs leading-relaxed text-gs-mist">{tr(chapter.summary, lang)}</span>
                   </span>
-                  <span className="gs-number mt-0.5 text-[10px] text-gs-mist">{chapter.minutes}′</span>
+                  <span className="gs-number mt-0.5 text-xs text-gs-mist">{chapter.minutes}′</span>
                 </Link>
               </li>
             ))}
           </ol>
         </Card>
       </div>
+
+      <CaseStudySection methodId={meta.id} />
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-gs-ice">{tr(site.methodPage.other, lang)}</h2>
@@ -115,7 +118,7 @@ export function MethodPage() {
             <Link
               key={m.id}
               to={`/metode/${m.id}`}
-              className="rounded-lg border border-black/10 bg-gs-panel/70 px-3 py-1.5 text-[11px] font-medium text-gs-mist transition-colors hover:border-black/20 hover:text-gs-ice"
+              className="rounded-lg border border-black/10 bg-gs-panel/70 px-3 py-1.5 text-xs font-medium text-gs-mist transition-colors hover:border-black/20 hover:text-gs-ice"
             >
               {d.methods.list[m.id].name}
             </Link>

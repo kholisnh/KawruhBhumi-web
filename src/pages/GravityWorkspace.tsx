@@ -7,6 +7,8 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
 import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
 import { GrvBodiesPanel, GrvMapPanel, GrvModelPanel, GrvProfilePanel, GrvSurveyPanel, GrvSummaryPanel } from '../components/workspace/gravity/GrvParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
 import { useI18n } from '../i18n'
@@ -27,10 +29,14 @@ function displayDepth(input: GrvInput): number {
 
 export function GravityWorkspace() {
   const { d } = useI18n()
+  const shared = useSharedScenario<GrvInput>('gravity')
   const t = d.grv
   const s = useForwardState<GrvInput, GrvResult, GrvScenarioId>({
     scenarios: grvScenarios,
-    initialScenario: 'saltDome',
+    initialScenario: (shared?.scenarioId as GrvScenarioId | undefined) ?? 'saltDome',
+    initialInput: shared?.input,
+    autoRun: true,
+    storageKey: 'kb.scenario.gravity',
     scenarioInput: useCallback((id: GrvScenarioId) => grvScenarioToInput(grvScenarios.find((x) => x.id === id) ?? grvScenarios[0]), []),
     validate: validateGravity,
     run: runGravityForward,
@@ -104,6 +110,7 @@ export function GravityWorkspace() {
           <Button variant="secondary" onClick={s.resetModel}>
             {d.wshared.resetModel}
           </Button>
+          <ShareButton methodId="gravity" scenarioId={s.scenarioId} input={s.input} />
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
           <Button variant="secondary" size="sm" onClick={handleExportCsv} disabled={!s.result}>
             {d.wshared.exportCsv}
@@ -145,7 +152,7 @@ export function GravityWorkspace() {
             title={t.profileTitle}
             actions={
               s.result ? (
-                <span className="gs-number text-[10.5px] text-gs-mist">
+                <span className="gs-number text-xs text-gs-mist">
                   {d.wshared.stations}: {fmt(s.result.diagnostics.nStations, 0)}
                 </span>
               ) : undefined

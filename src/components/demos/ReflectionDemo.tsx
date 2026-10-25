@@ -76,7 +76,7 @@ export function ReflectionDemo() {
           <Stat label={t.impedance2} value={fmt(z2 / 1e6, 3)} unit="M·kg/m²/s" />
           <Stat label={t.coeff} value={fmt(R, 3)} accent={chartColors.teal} />
         </div>
-        <p className="text-[11px] text-gs-mist">{t.polarityNote}</p>
+        <p className="text-xs text-gs-mist">{t.polarityNote}</p>
       </div>
       <Plot data={data} layout={layout} style={{ height: 260 }} />
     </div>

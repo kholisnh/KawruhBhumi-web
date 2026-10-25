@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const gravityTheory: MethodTheory = {
   methodId: 'gravity',
@@ -12,6 +12,7 @@ export const gravityTheory: MethodTheory = {
       },
       minutes: 4,
       blocks: [
+        figure('gravity-acquisition'),
         p(
           'A gravimeter measures the local acceleration due to gravity. The absolute value is dominated by the Earth as a whole, so surveys use relative instruments and study the small differences between stations. In exploration geophysics the useful unit is the milligal: 1 mGal = 10⁻⁵ m/s².',
           'Gravimeter mengukur percepatan gravitasi lokal. Nilai absolutnya didominasi bumi secara keseluruhan, sehingga survei memakai instrumen relatif dan mempelajari perbedaan kecil antar-stasiun. Dalam geofisika eksplorasi, satuan yang berguna adalah miligal: 1 mGal = 10⁻⁵ m/s².',
@@ -72,6 +73,7 @@ export const gravityTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('gravity-basin'),
         p(
           'The forward map takes a density model and produces a gravity profile or map. A compact shallow body gives a narrow, high-amplitude anomaly; the same mass spread over a larger, deeper volume gives a broad, low-amplitude anomaly. Depth sensitivity falls rapidly with distance, so the method is naturally biased toward shallow structure.',
           'Peta forward mengambil model densitas dan menghasilkan profil atau peta gravitasi. Tubuh dangkal yang kompak memberi anomali sempit beramplitudo tinggi; massa yang sama tersebar pada volume lebih besar dan lebih dalam memberi anomali lebar beramplitudo rendah. Sensitivitas kedalaman menurun cepat terhadap jarak, sehingga metode ini secara alami condong ke struktur dangkal.',

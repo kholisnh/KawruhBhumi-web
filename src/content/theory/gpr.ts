@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const gprTheory: MethodTheory = {
   methodId: 'gpr',
@@ -12,6 +12,7 @@ export const gprTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('gpr-acquisition'),
         p(
           'Ground-penetrating radar uses an antenna that both transmits and receives. It radiates a short electromagnetic pulse — typically 10 to 1000 MHz — into the ground. Every time the pulse crosses a boundary where the dielectric permittivity or the electrical conductivity changes, part of the energy reflects back.',
           'Radar penembus tanah memakai antena yang sekaligus memancarkan dan menerima. Antena meradiasikan pulsa elektromagnetik pendek — biasanya 10 sampai 1000 MHz — ke dalam tanah. Setiap kali pulsa melewati bidang batas tempat permitivitas dielektrik atau konduktivitas listrik berubah, sebagian energi dipantulkan kembali.',
@@ -72,6 +73,7 @@ export const gprTheory: MethodTheory = {
       },
       minutes: 6,
       blocks: [
+        figure('gpr-peat'),
         p(
           'The forward model works in one direction only. We prescribe layers with thickness, εr and σ, place targets, and compute what the antenna would record. Each interface contributes a reflection coefficient; the wave loses energy as it crosses interfaces and as it travels. A Ricker wavelet gives the pulse its shape, and the reflected wavelets are added at their two-way arrival times.',
           'Model forward bekerja hanya dalam satu arah. Kita menetapkan lapisan dengan ketebalan, εr, dan σ, menempatkan target, lalu menghitung apa yang akan direkam antena. Setiap bidang batas menyumbang koefisien refleksi; gelombang kehilangan energi saat melintasi bidang batas dan saat menjalar. Wavelet Ricker memberi bentuk pulsa, dan wavelet yang terpantul dijumlahkan pada waktu tiba dua arahnya.',

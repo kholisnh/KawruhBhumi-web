@@ -52,7 +52,7 @@ export function baseLayout(overrides: Partial<Layout> = {}): Partial<Layout> {
     zerolinecolor: chartColors.zero,
     linecolor: chartColors.line,
     tickcolor: chartColors.line,
-    tickfont: { family: MONO_FONT, size: 10.5, color: chartColors.mist },
+    tickfont: { family: MONO_FONT, size: 12, color: chartColors.mist },
     titlefont: { family: SANS_FONT, size: 12, color: chartColors.mist },
     automargin: true,
   }
@@ -69,13 +69,13 @@ export function baseLayout(overrides: Partial<Layout> = {}): Partial<Layout> {
       yanchor: 'bottom',
       y: 1.02,
       x: 0,
-      font: { size: 11, color: chartColors.mist },
+      font: { size: 12, color: chartColors.mist },
       bgcolor: 'rgba(0,0,0,0)',
     },
     hoverlabel: {
       bgcolor: '#FFFFFF',
       bordercolor: 'rgba(54,100,244,0.35)',
-      font: { family: MONO_FONT, size: 11, color: chartColors.ice },
+      font: { family: MONO_FONT, size: 12, color: chartColors.ice },
     },
     ...overrides,
   }

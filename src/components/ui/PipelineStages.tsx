@@ -19,7 +19,7 @@ export function PipelineStages({ stages, activeIndex = 1 }: PipelineStagesProps)
           >
             <div className="flex items-center gap-2">
               <span
-                className={`gs-number flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-semibold ${
+                className={`gs-number flex h-5 w-5 items-center justify-center rounded-md text-xs font-semibold ${
                   active ? 'bg-gs-cyan text-gs-navy' : 'bg-black/5 text-gs-mist'
                 }`}
               >
@@ -27,7 +27,7 @@ export function PipelineStages({ stages, activeIndex = 1 }: PipelineStagesProps)
               </span>
               <span className={`text-xs font-semibold ${active ? 'text-gs-cyan' : 'text-gs-ice'}`}>{stage.t}</span>
             </div>
-            <p className="mt-1.5 text-[11px] leading-snug text-gs-mist">{stage.d}</p>
+            <p className="mt-1.5 text-xs leading-snug text-gs-mist">{stage.d}</p>
           </li>
         )
       })}

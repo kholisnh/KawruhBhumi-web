@@ -23,7 +23,7 @@ export function SimulatorHub() {
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <h3 className="text-sm font-semibold text-gs-ice">{info.name}</h3>
-                    <p className="gs-number text-[10.5px] tracking-widest" style={{ color: meta.accent }}>
+                    <p className="gs-number text-xs tracking-widest" style={{ color: meta.accent }}>
                       {info.abbr}
                     </p>
                   </div>
@@ -66,7 +66,7 @@ export function SimulatorHub() {
         </Panel>
         <Panel title={d.hub.transparencyTitle}>
           <p className="text-xs leading-relaxed text-gs-mist">{d.hub.transparencyBody}</p>
-          <p className="mt-3 rounded-xl border border-gs-amber/25 bg-gs-amber/5 px-3 py-2 text-[11px] leading-relaxed text-gs-mist">
+          <p className="mt-3 rounded-xl border border-gs-amber/25 bg-gs-amber/5 px-3 py-2 text-xs leading-relaxed text-gs-mist">
             {d.hub.gprNote}
           </p>
         </Panel>

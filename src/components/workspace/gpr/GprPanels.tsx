@@ -1,4 +1,5 @@
 import { useI18n } from '../../../i18n'
+import { useFieldHelp } from '../../../content/fieldHelp'
 import { fillTemplate, fmt } from '../../../sim/core/format'
 import type { GprResult } from '../../../sim/gpr/types'
 import type { FieldError } from '../../../sim/gpr/validate'
@@ -31,19 +32,19 @@ export function ErrorList({ errors }: { errors: FieldError[] }) {
   if (errors.length === 0) return null
   return (
     <div className="rounded-lg border border-gs-danger/40 bg-gs-danger/8 px-3 py-2">
-      <p className="text-[11px] font-semibold text-gs-danger">
+      <p className="text-xs font-semibold text-gs-danger">
         {d.common.errorsTitle} ({errors.length})
       </p>
       <ul className="mt-1 space-y-0.5">
         {errors.slice(0, 6).map((e, i) => {
           const template = (d.ws.errors as Record<string, string>)[e.key] ?? e.key
           return (
-            <li key={`${e.path}-${i}`} className="gs-number text-[10.5px] text-gs-danger/90">
+            <li key={`${e.path}-${i}`} className="gs-number text-xs text-gs-danger/90">
               {e.path} — {fillTemplate(template, e.params ?? {})}
             </li>
           )
         })}
-        {errors.length > 6 && <li className="text-[10.5px] text-gs-danger/80">…</li>}
+        {errors.length > 6 && <li className="text-xs text-gs-danger/80">…</li>}
       </ul>
     </div>
   )
@@ -84,6 +85,7 @@ interface SurveyPanelProps {
 
 export function SurveyPanelFields({ survey, onPatch, errorFor }: SurveyPanelProps) {
   const { d } = useI18n()
+  const help = useFieldHelp()
   const t = d.ws
   const autoWindow = survey.timeWindowNs === null
   return (
@@ -97,6 +99,7 @@ export function SurveyPanelFields({ survey, onPatch, errorFor }: SurveyPanelProp
         step={10}
         unit="MHz"
         error={errorFor('survey.frequencyMHz')}
+        help={help('gpr.frequency')}
       />
       <RangeField
         label={t.traceSpacing}
@@ -107,6 +110,7 @@ export function SurveyPanelFields({ survey, onPatch, errorFor }: SurveyPanelProp
         step={0.01}
         unit="m"
         error={errorFor('survey.traceSpacing')}
+        help={help('gpr.spacing')}
       />
       <div className="grid grid-cols-2 gap-3">
         <NumberField
@@ -151,6 +155,7 @@ export function SurveyPanelFields({ survey, onPatch, errorFor }: SurveyPanelProp
         step={0.5}
         unit="%"
         error={errorFor('survey.noisePercent')}
+        help={help('gpr.noise')}
       />
     </div>
   )
@@ -173,7 +178,7 @@ export function LayerEditor({ layers, onChange, onAdd, onRemove, errorFor }: Lay
   const t = d.ws
   return (
     <div>
-      <div className="mb-2 grid grid-cols-[1.4rem_1fr_1fr_1fr_1.6rem] items-end gap-1.5 text-right text-[10px] font-semibold tracking-wide text-gs-mist uppercase">
+      <div className="mb-2 grid grid-cols-[1.4rem_1fr_1fr_1fr_1.6rem] items-end gap-1.5 text-right text-xs font-semibold tracking-wide text-gs-mist uppercase">
         <span aria-hidden />
         <span>{t.thickness} [m]</span>
         <span>{t.epsR}</span>
@@ -187,7 +192,7 @@ export function LayerEditor({ layers, onChange, onAdd, onRemove, errorFor }: Lay
           const isHalf = i === layers.length - 1
           return (
             <div key={layer.id} className="grid grid-cols-[1.4rem_1fr_1fr_1fr_1.6rem] items-start gap-1.5">
-              <span className="gs-number pt-2 text-[10.5px] text-gs-mist" title={isHalf ? t.halfSpace : `${t.layer} ${i + 1}`}>
+              <span className="gs-number pt-2 text-xs text-gs-mist" title={isHalf ? t.halfSpace : `${t.layer} ${i + 1}`}>
                 L{i + 1}
               </span>
               <NumberField
@@ -229,7 +234,7 @@ export function LayerEditor({ layers, onChange, onAdd, onRemove, errorFor }: Lay
         })}
       </div>
       {isHalfNote(layers.length) && (
-        <p className="mt-1.5 text-[10px] text-gs-mist">
+        <p className="mt-1.5 text-xs text-gs-mist">
           L{layers.length} = {t.halfSpace}
         </p>
       )}
@@ -264,11 +269,11 @@ export function TargetEditor({ targets, onChange, onAdd, onRemove, errorFor }: T
       {targets.map((target, i) => (
         <div key={target.id} className="rounded-xl border border-black/10 bg-gs-deep/60 p-2.5">
           <div className="mb-2 flex items-center justify-between">
-            <span className="gs-number text-[10.5px] font-semibold text-gs-amber">T{i + 1}</span>
+            <span className="gs-number text-xs font-semibold text-gs-amber">T{i + 1}</span>
             <button
               type="button"
               onClick={() => onRemove(target.id)}
-              className="rounded-md px-1.5 py-0.5 text-[10px] text-gs-mist transition-colors hover:bg-gs-danger/10 hover:text-gs-danger"
+              className="rounded-md px-1.5 py-0.5 text-xs text-gs-mist transition-colors hover:bg-gs-danger/10 hover:text-gs-danger"
             >
               {t.removeTarget}
             </button>
@@ -325,7 +330,7 @@ export function TargetEditor({ targets, onChange, onAdd, onRemove, errorFor }: T
               error={errorFor(`target.${i}.sigma`)}
             />
             <div className="flex items-end pb-4">
-              <span className="text-[9.5px] leading-tight text-gs-mist/80">{t.isMetal}: εr = 1e6</span>
+              <span className="text-xs leading-tight text-gs-mist/80">{t.isMetal}: εr = 1e6</span>
             </div>
           </div>
         </div>
@@ -346,7 +351,7 @@ export function WarningsPanel({ result }: { result: GprResult | null }) {
   if (!result) return null
   const warnings = result.diagnostics.warnings
   if (warnings.length === 0) {
-    return <p className="text-[11px] text-gs-mist">{d.ws.noWarnings}</p>
+    return <p className="text-xs text-gs-mist">{d.ws.noWarnings}</p>
   }
   return (
     <ul className="space-y-2">
@@ -354,7 +359,7 @@ export function WarningsPanel({ result }: { result: GprResult | null }) {
         const template = (d.ws.warnings as Record<string, string>)[w.key] ?? w.key
         const isHigh = w.key === 'highAttenuation'
         return (
-          <li key={`${w.key}-${i}`} className="flex gap-2 text-[11px] leading-relaxed text-gs-mist">
+          <li key={`${w.key}-${i}`} className="flex gap-2 text-xs leading-relaxed text-gs-mist">
             <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${isHigh ? 'bg-gs-danger' : 'bg-gs-amber'}`} aria-hidden />
             <span>{fillTemplate(template, w.params)}</span>
           </li>
@@ -386,9 +391,9 @@ export function SummaryPanel({ result, showUnits }: { result: GprResult | null; 
         <Stat label={t.skinDepth} value={fmt(diag.avgSkinDepthM, 3)} unit="m" accent={chartColors.amber} />
       </div>
       <div className="overflow-x-auto rounded-xl border border-black/10">
-        <table className="w-full min-w-[560px] text-left text-[11px]">
+        <table className="w-full min-w-[560px] text-left text-xs">
           <thead>
-            <tr className="border-b border-black/10 bg-gs-deep/80 text-[10px] tracking-wider text-gs-mist uppercase">
+            <tr className="border-b border-black/10 bg-gs-deep/80 text-xs tracking-wider text-gs-mist uppercase">
               <th className="px-3 py-1.5">{t.layer}</th>
               <th className="px-3 py-1.5">{t.thickness} [m]</th>
               <th className="px-3 py-1.5">{t.epsR}</th>
@@ -428,9 +433,9 @@ export function PicksPanel({ result }: { result: GprResult | null }) {
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto rounded-xl border border-black/10">
-        <table className="w-full min-w-[520px] text-left text-[11px]">
+        <table className="w-full min-w-[520px] text-left text-xs">
           <thead>
-            <tr className="border-b border-black/10 bg-gs-deep/80 text-[10px] tracking-wider text-gs-mist uppercase">
+            <tr className="border-b border-black/10 bg-gs-deep/80 text-xs tracking-wider text-gs-mist uppercase">
               <th className="px-3 py-1.5">{t.interface}</th>
               <th className="px-3 py-1.5">{t.twt} [ns]</th>
               <th className="px-3 py-1.5">{t.depthEst} [m]</th>
@@ -462,9 +467,9 @@ export function PicksPanel({ result }: { result: GprResult | null }) {
       </div>
       {result.targets.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-black/10">
-          <table className="w-full min-w-[520px] text-left text-[11px]">
+          <table className="w-full min-w-[520px] text-left text-xs">
             <thead>
-              <tr className="border-b border-black/10 bg-gs-deep/80 text-[10px] tracking-wider text-gs-mist uppercase">
+              <tr className="border-b border-black/10 bg-gs-deep/80 text-xs tracking-wider text-gs-mist uppercase">
                 <th className="px-3 py-1.5">{t.target}</th>
                 <th className="px-3 py-1.5">x [m]</th>
                 <th className="px-3 py-1.5">z [m]</th>
@@ -488,7 +493,7 @@ export function PicksPanel({ result }: { result: GprResult | null }) {
           </table>
         </div>
       )}
-      <p className="text-[10.5px] leading-relaxed text-gs-mist/85">{t.depthConversion}</p>
+      <p className="text-xs leading-relaxed text-gs-mist/85">{t.depthConversion}</p>
     </div>
   )
 }
@@ -512,12 +517,12 @@ export function WorkspacePipeline() {
       ).map(([key, desc], i) => (
         <li key={key} className={`rounded-xl border px-3 py-2.5 ${i === 1 ? 'border-gs-cyan/50 bg-gs-cyan/8' : 'border-black/10 bg-gs-deep/60'}`}>
           <div className="flex items-center gap-2">
-            <span className={`gs-number flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-semibold ${i === 1 ? 'bg-gs-cyan text-gs-navy' : 'bg-black/5 text-gs-mist'}`}>
+            <span className={`gs-number flex h-5 w-5 items-center justify-center rounded-md text-xs font-semibold ${i === 1 ? 'bg-gs-cyan text-gs-navy' : 'bg-black/5 text-gs-mist'}`}>
               {i + 1}
             </span>
             <span className={`text-xs font-semibold ${i === 1 ? 'text-gs-cyan' : 'text-gs-ice'}`}>{t.stages[key]}</span>
           </div>
-          <p className="mt-1.5 text-[11px] leading-snug text-gs-mist">{desc}</p>
+          <p className="mt-1.5 text-xs leading-snug text-gs-mist">{desc}</p>
         </li>
       ))}
     </ol>

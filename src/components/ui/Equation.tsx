@@ -24,7 +24,7 @@ export function Equation({ latex, block = true, className = '', caption }: Equat
   return (
     <figure className="my-2">
       {eq}
-      <figcaption className="mt-1 text-center text-[11px] text-gs-mist">{caption}</figcaption>
+      <figcaption className="mt-1 text-center text-xs text-gs-mist">{caption}</figcaption>
     </figure>
   )
 }

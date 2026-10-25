@@ -40,7 +40,7 @@ export function Badge({ children, color, soft = false, className = '' }: BadgePr
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wider uppercase ${className}`}
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold tracking-wider uppercase ${className}`}
       style={style}
     >
       {children}

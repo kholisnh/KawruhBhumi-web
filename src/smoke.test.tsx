@@ -11,6 +11,7 @@ import { GravityWorkspace } from './pages/GravityWorkspace'
 import { ReflectionWorkspace } from './pages/ReflectionWorkspace'
 import { RefractionWorkspace } from './pages/RefractionWorkspace'
 import { ResistivityWorkspace } from './pages/ResistivityWorkspace'
+import { HvsrWorkspace } from './pages/HvsrWorkspace'
 import { MethodsPage } from './pages/MethodsPage'
 import { TheoryIndexPage } from './pages/TheoryIndexPage'
 import { TheoryChapterPage } from './pages/TheoryChapterPage'
@@ -53,9 +54,9 @@ describe('page smoke tests (server render)', () => {
     expect(html.length).toBeGreaterThan(8_000)
   })
 
-  it('simulator hub lists all six methods', () => {
+  it('simulator hub lists all seven methods', () => {
     const html = render(<SimulatorHub />)
-    for (const name of ['Ground-Penetrating Radar', 'Magnetic', 'Gravity', 'Seismic Reflection', 'Seismic Refraction', 'Resistivity Sounding (VES)']) {
+    for (const name of ['Ground-Penetrating Radar', 'Magnetic', 'Gravity', 'Seismic Reflection', 'Seismic Refraction', 'Resistivity Sounding (VES)', 'Horizontal-to-Vertical Spectral Ratio']) {
       expect(html).toContain(name)
     }
   })
@@ -107,9 +108,17 @@ describe('page smoke tests (server render)', () => {
     expect(html).toContain('Ω·m')
   })
 
+  it('HVSR workspace renders forward and inversion controls', () => {
+    const html = render(<HvsrWorkspace />)
+    expect(html).toContain('HVSR')
+    expect(html).toContain('Run Simulation')
+    expect(html).toContain('Invert the H/V curve')
+    expect(html).toContain('PASSIVE')
+  })
+
   it('methods page lists every method', () => {
     const html = render(<MethodsPage />)
-    for (const name of ['Ground-Penetrating Radar', 'Magnetic', 'Gravity', 'Seismic Reflection', 'Seismic Refraction', 'Resistivity Sounding (VES)']) {
+    for (const name of ['Ground-Penetrating Radar', 'Magnetic', 'Gravity', 'Seismic Reflection', 'Seismic Refraction', 'Resistivity Sounding (VES)', 'Horizontal-to-Vertical Spectral Ratio']) {
       expect(html).toContain(name)
     }
   })
@@ -127,7 +136,7 @@ describe('page smoke tests (server render)', () => {
   })
 
   it('theory chapter renders equations for every method', () => {
-    for (const id of ['gpr', 'magnetic', 'gravity', 'reflection', 'refraction', 'resistivity']) {
+    for (const id of ['gpr', 'magnetic', 'gravity', 'reflection', 'refraction', 'resistivity', 'hvsr']) {
       const html = renderRoute('/teori/:methodId/:chapterId', `/teori/${id}/physics`, <TheoryChapterPage />)
       expect(html.length).toBeGreaterThan(4_000)
       expect(html).toContain('katex')
@@ -150,7 +159,7 @@ describe('page smoke tests (server render)', () => {
   it('about page renders scope and roadmap', () => {
     const html = render(<AboutPage />)
     expect(html).toContain('Roadmap')
-    expect(html).toContain('Phase 2')
+    expect(html).toContain('seven forward workspaces')
   })
 
   it('not found page renders', () => {

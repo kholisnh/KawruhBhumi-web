@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { InfoTip } from './InfoTip'
 
 interface NumberFieldProps {
   label: string
@@ -11,6 +12,7 @@ interface NumberFieldProps {
   disabled?: boolean
   compact?: boolean
   className?: string
+  help?: string
 }
 
 function toDraft(value: number): string {
@@ -22,7 +24,7 @@ function toDraft(value: number): string {
  * Numeric input with free-text draft state: invalid text is propagated as NaN
  * so the validator surfaces a proper error instead of silently coercing.
  */
-export function NumberField({ label, value, onChange, unit, error, step, disabled, compact, className = '' }: NumberFieldProps) {
+export function NumberField({ label, value, onChange, unit, error, step, disabled, compact, className = '', help }: NumberFieldProps) {
   const [draft, setDraft] = useState(() => toDraft(value))
   const focusedRef = useRef(false)
 
@@ -37,7 +39,10 @@ export function NumberField({ label, value, onChange, unit, error, step, disable
 
   return (
     <label className={`block ${className}`}>
-      <span className={`mb-1 block text-[11px] font-medium text-gs-mist ${compact ? 'sr-only' : ''}`}>{label}</span>
+      <span className={`mb-1 flex items-center gap-1 text-xs font-medium text-gs-mist ${compact ? 'sr-only' : ''}`}>
+        {label}
+        {help && <InfoTip label={label}>{help}</InfoTip>}
+      </span>
       <span className="relative block">
         <input
           type="text"
@@ -63,12 +68,12 @@ export function NumberField({ label, value, onChange, unit, error, step, disable
           } disabled:opacity-50 ${unit ? 'pr-14' : ''}`}
         />
         {unit && (
-          <span className="gs-number pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-[10px] text-gs-mist">
+          <span className="gs-number pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-gs-mist">
             {unit}
           </span>
         )}
       </span>
-      <span className="mt-0.5 block min-h-[12px] text-[10px] leading-tight text-gs-danger">{error ?? ''}</span>
+      <span className="mt-0.5 block min-h-[12px] text-xs leading-tight text-gs-danger">{error ?? ''}</span>
     </label>
   )
 }

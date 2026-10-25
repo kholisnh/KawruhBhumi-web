@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { gprScenarios, scenarioToInput, uid, type ScenarioId } from '../../../sim/gpr/model'
 import { runGprForward } from '../../../sim/gpr/solver'
 import type { EmLayer, GprInput, GprResult, GprSurvey, GprTarget } from '../../../sim/gpr/types'
@@ -39,9 +39,20 @@ const scenarioInput = (id: ScenarioId): GprInput => {
  * preview sandbox. Forward-model stages stay strictly separated:
  * model state → (validated) solver run → immutable result snapshot.
  */
-export function useGprState(initialScenario: ScenarioId = 'sandBedrock'): GprStateApi {
-  const [scenarioId, setScenarioId] = useState<ScenarioId>(initialScenario)
-  const [input, setInput] = useState<GprInput>(() => scenarioInput(initialScenario))
+export function useGprState(
+  initialScenario: ScenarioId = 'sandBedrock',
+  options: { initialInput?: GprInput; autoRun?: boolean; storageKey?: string } = {},
+): GprStateApi {
+  const [scenarioId, setScenarioId] = useState<ScenarioId>(() => {
+    if (options.initialInput || !options.storageKey || typeof window === 'undefined') return initialScenario
+    try {
+      const stored = localStorage.getItem(options.storageKey)
+      return gprScenarios.some((s) => s.id === stored) ? (stored as ScenarioId) : initialScenario
+    } catch {
+      return initialScenario
+    }
+  })
+  const [input, setInput] = useState<GprInput>(() => (options.initialInput ? cloneInput(options.initialInput) : scenarioInput(scenarioId)))
   const [result, setResult] = useState<GprResult | null>(null)
   const [runError, setRunError] = useState<string | null>(null)
   const [lastRunJson, setLastRunJson] = useState<string | null>(null)
@@ -113,12 +124,19 @@ export function useGprState(initialScenario: ScenarioId = 'sandBedrock'): GprSta
 
   const loadScenario = useCallback((id: ScenarioId) => {
     setScenarioId(id)
+    if (options.storageKey) {
+      try {
+        localStorage.setItem(options.storageKey, id)
+      } catch {
+        /* storage may be unavailable */
+      }
+    }
     const next = scenarioInput(id)
     setInput(next)
     setLastRunJson(null)
     setResult(null)
     setRunError(null)
-  }, [])
+  }, [options.storageKey])
 
   const run = useCallback(() => {
     const currentErrors = validateGpr(input)
@@ -144,6 +162,17 @@ export function useGprState(initialScenario: ScenarioId = 'sandBedrock'): GprSta
     setResult(null)
     setRunError(null)
   }, [scenarioId])
+
+  const runRef = useRef(run)
+  useEffect(() => {
+    runRef.current = run
+  }, [run])
+  const autoRan = useRef(false)
+  useEffect(() => {
+    if (!options.autoRun || autoRan.current) return
+    autoRan.current = true
+    runRef.current()
+  }, [options.autoRun])
 
   return {
     input,

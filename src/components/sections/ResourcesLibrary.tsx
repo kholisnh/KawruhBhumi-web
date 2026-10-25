@@ -32,6 +32,7 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
     foundational: '#3664F4',
     teaching: '#2E9FBF',
     advanced: '#60CBFF',
+    case: '#E85353',
   }
 
   return (
@@ -41,7 +42,7 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="block flex-1">
-            <span className="mb-1 block text-[11px] font-medium text-gs-mist">{d.resources.searchPlaceholder}</span>
+            <span className="mb-1 block text-xs font-medium text-gs-mist">{d.resources.searchPlaceholder}</span>
             <input
               type="search"
               value={query}
@@ -71,12 +72,13 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
                 { value: 'foundational', label: d.resources.types.foundational },
                 { value: 'teaching', label: d.resources.types.teaching },
                 { value: 'advanced', label: d.resources.types.advanced },
+                { value: 'case', label: d.resources.types.case },
               ]}
             />
           </div>
         </div>
 
-        <p className="gs-number mt-3 text-[11px] text-gs-mist">
+        <p className="gs-number mt-3 text-xs text-gs-mist">
           {filtered.length} {d.resources.showing}
         </p>
 
@@ -91,7 +93,7 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h3 className="text-sm font-semibold text-gs-ice">{ref.title}</h3>
-                    <p className="mt-0.5 text-[11.5px] text-gs-mist">
+                    <p className="mt-0.5 text-xs text-gs-mist">
                       {ref.authors} — {ref.venue} ({ref.year})
                     </p>
                   </div>
@@ -114,18 +116,18 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
                     href={ref.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] font-medium text-gs-cyan underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-ice"
+                    className="text-xs font-medium text-gs-cyan underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-ice"
                   >
                     {d.resources.openSource} ↗
                   </a>
-                  {ref.doi && <span className="gs-number text-[10.5px] text-gs-mist/80">doi:{ref.doi}</span>}
+                  {ref.doi && <span className="gs-number text-xs text-gs-mist/80">doi:{ref.doi}</span>}
                 </div>
               </li>
             ))}
           </ul>
         )}
 
-        <p className="mt-6 text-[10.5px] leading-relaxed text-gs-mist/80">{d.resources.disclaimer}</p>
+        <p className="mt-6 text-xs leading-relaxed text-gs-mist/80">{d.resources.disclaimer}</p>
       </div>
     </section>
   )

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useI18n } from '../../../i18n'
+import { useFieldHelp } from '../../../content/fieldHelp'
 import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { ReflInput, ReflLayer, ReflResult, ReflSurvey } from '../../../sim/reflection/types'
@@ -18,16 +19,17 @@ const ACCENT = '#2E9FBF'
 
 export function ReflSurveyPanel({ survey, errors, errDict, patch }: { survey: ReflSurvey; errors: FieldError[]; errDict: Record<string, string>; patch: (p: Partial<ReflSurvey>) => void }) {
   const { d } = useI18n()
+  const help = useFieldHelp()
   const t = d.refl
   const errFor = useWsErrorFor(errors, errDict)
   const [autoWindow, setAutoWindow] = useState(survey.timeWindowMs === null)
   return (
     <Panel title={t.surveyTitle}>
       <div className="grid grid-cols-2 gap-3">
-        <NumberField label={t.freq} unit="Hz" value={survey.waveletFreqHz} onChange={(v) => patch({ waveletFreqHz: v })} error={errFor('survey.waveletFreqHz')} />
+        <NumberField label={t.freq} unit="Hz" value={survey.waveletFreqHz} onChange={(v) => patch({ waveletFreqHz: v })} error={errFor('survey.waveletFreqHz')} help={help('refl.frequency')} />
         <NumberField label={t.nOffsets} value={survey.nOffsets} onChange={(v) => patch({ nOffsets: Math.round(v) })} step={1} error={errFor('survey.nOffsets')} />
         <NumberField label={t.minOffset} unit="m" value={survey.minOffsetM} onChange={(v) => patch({ minOffsetM: v })} error={errFor('survey.minOffsetM')} />
-        <NumberField label={t.maxOffset} unit="m" value={survey.maxOffsetM} onChange={(v) => patch({ maxOffsetM: v })} error={errFor('survey.maxOffsetM')} />
+        <NumberField label={t.maxOffset} unit="m" value={survey.maxOffsetM} onChange={(v) => patch({ maxOffsetM: v })} error={errFor('survey.maxOffsetM')} help={help('refl.spread')} />
         <NumberField label={d.wshared.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
         <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
@@ -77,9 +79,9 @@ export function ReflLayersPanel({
           return (
             <div key={layer.id} className="rounded-lg border border-gs-raised/70 bg-gs-deep/40 p-3">
               <div className="mb-2 flex items-center gap-2">
-                <span className="gs-number text-[10.5px] text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
+                <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > 2 && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-[11px] text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
                     {t.removeLayer}
                   </button>
                 )}
@@ -109,7 +111,7 @@ export function ReflTracePanel({ result, showGrid, showUnits, onReady, height = 
   return (
     <div>
       <Plot data={data} layout={layout} onReady={onReady} style={{ minHeight: height }} />
-      <p className="mt-1 text-[10.5px] text-gs-mist">{t.traceNote}</p>
+      <p className="mt-1 text-xs text-gs-mist">{t.traceNote}</p>
     </div>
   )
 }
@@ -179,7 +181,7 @@ export function ReflGatherPanel({
           height={height}
           onSvg={onSvg}
         />
-        <p className="mt-1 text-[10.5px] leading-relaxed text-gs-mist">{t.gatherNote}</p>
+        <p className="mt-1 text-xs leading-relaxed text-gs-mist">{t.gatherNote}</p>
       </div>
     )
   }
@@ -216,7 +218,7 @@ export function ReflPicksPanel({ result, onExportCsv }: { result: ReflResult; on
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-gs-raised/70 text-[10px] uppercase tracking-wide text-gs-mist">
+            <tr className="border-b border-gs-raised/70 text-xs uppercase tracking-wide text-gs-mist">
               <th className="py-1.5 pr-3 font-medium">#</th>
               <th className="py-1.5 pr-3 font-medium">{t.depth}</th>
               <th className="py-1.5 pr-3 font-medium">TWT</th>
@@ -230,7 +232,7 @@ export function ReflPicksPanel({ result, onExportCsv }: { result: ReflResult; on
           </thead>
           <tbody>
             {result.picks.map((p) => (
-              <tr key={p.index} className="border-b border-gs-raised/40 text-[11.5px] text-gs-ice">
+              <tr key={p.index} className="border-b border-gs-raised/40 text-xs text-gs-ice">
                 <td className="gs-number py-1.5 pr-3 text-gs-mist">{p.index}</td>
                 <td className="gs-number py-1.5 pr-3">{fmt(p.depthM, 1)} m</td>
                 <td className="gs-number py-1.5 pr-3">{fmt(p.twtMs, 1)} ms</td>
@@ -245,7 +247,7 @@ export function ReflPicksPanel({ result, onExportCsv }: { result: ReflResult; on
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{t.picksNote}</p>
+      <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.picksNote}</p>
     </Panel>
   )
 }

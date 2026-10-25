@@ -6,13 +6,13 @@ import { Logo } from './Logo'
 export function Footer() {
   const { d, lang } = useI18n()
   return (
-    <footer className="mt-20 border-t border-black/10 bg-gs-deep/60">
+    <footer className="no-print mt-20 border-t border-black/10 bg-gs-deep/60">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo />
-          <p className="mt-2 text-[10px] tracking-[0.18em] text-gs-mist/75">{tr(site.brand.tagline, lang)}</p>
+          <p className="mt-2 text-xs tracking-[0.18em] text-gs-mist/75">{tr(site.brand.tagline, lang)}</p>
           <p className="mt-4 max-w-xs text-xs leading-relaxed text-gs-mist">{d.footer.aboutBody}</p>
-          <p className="mt-3 max-w-xs text-[10px] leading-relaxed text-gs-mist/60">{tr(site.disclaimer.devShort, lang)}</p>
+          <p className="mt-3 max-w-xs text-xs leading-relaxed text-gs-mist/60">{tr(site.disclaimer.devShort, lang)}</p>
         </div>
         <div>
           <h3 className="gs-label mb-3">{tr(site.footer.docs, lang)}</h3>
@@ -61,7 +61,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-black/8 py-4">
-        <p className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 text-[11px] text-gs-mist/70 sm:px-6">
+        <p className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 text-xs text-gs-mist/70 sm:px-6">
           <span>{d.footer.copyright}</span>
           <span>{tr(site.footer.built, lang)}</span>
         </p>

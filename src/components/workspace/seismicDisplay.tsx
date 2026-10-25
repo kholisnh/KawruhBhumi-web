@@ -240,7 +240,7 @@ export function WiggleRecord({
         return (
           <g key={`tx${k}`}>
             <line x1={px} y1={MARGIN.t - 4} x2={px} y2={MARGIN.t} stroke={AXIS} strokeWidth={1} />
-            <text x={px} y={MARGIN.t - 9} textAnchor="middle" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={AXIS}>
+            <text x={px} y={MARGIN.t - 9} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={AXIS}>
               {fmtDist(x)}
             </text>
           </g>
@@ -251,17 +251,17 @@ export function WiggleRecord({
         return (
           <g key={`ty${k}`}>
             <line x1={MARGIN.l - 4} y1={py} x2={MARGIN.l} y2={py} stroke={AXIS} strokeWidth={1} />
-            <text x={MARGIN.l - 7} y={py + 3.5} textAnchor="end" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={AXIS}>
+            <text x={MARGIN.l - 7} y={py + 3.5} textAnchor="end" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={AXIS}>
               {fmtTick(t, timeScale)}
             </text>
           </g>
         )
       })}
 
-      <text x={MARGIN.l + innerW / 2} y={14} textAnchor="middle" fontSize={11.5} fontFamily="Inter, sans-serif" fill={AXIS}>
+      <text x={MARGIN.l + innerW / 2} y={14} textAnchor="middle" fontSize={12} fontFamily="Inter, sans-serif" fill={AXIS}>
         {xTitle}
       </text>
-      <text x={16} y={MARGIN.t + innerH / 2} textAnchor="middle" fontSize={11.5} fontFamily="Inter, sans-serif" fill={AXIS} transform={`rotate(-90 16 ${MARGIN.t + innerH / 2})`}>
+      <text x={16} y={MARGIN.t + innerH / 2} textAnchor="middle" fontSize={12} fontFamily="Inter, sans-serif" fill={AXIS} transform={`rotate(-90 16 ${MARGIN.t + innerH / 2})`}>
         {yTitle}
       </text>
     </svg>

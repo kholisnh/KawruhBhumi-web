@@ -142,4 +142,23 @@ export const physicsContent: Record<MethodId, PhysicsMethodContent> = {
     ],
     refIds: ['koefoed1979', 'loke2004', 'telford1990'],
   },
+  hvsr: {
+    id: 'hvsr',
+    equations: [
+      { latex: '\\mathrm{HV}(f) = \\frac{\\sqrt{H_N^2(f)+H_E^2(f)}}{V_Z(f)}' },
+      { latex: 'f_0 \\approx \\frac{V_S}{4H}' },
+      { latex: 'A_0 \\approx \\frac{Z_{\\mathrm{base}}}{Z_{\\mathrm{soil}}}' },
+      { latex: '\\chi^2 = \\frac{1}{N}\\sum_i \\left[\\ln \\mathrm{HV}_{\\mathrm{obs}}(f_i)-\\ln \\mathrm{HV}_{\\mathrm{mod}}(f_i)\\right]^2' },
+    ],
+    variables: [
+      { sym: 'H_N, H_E', meaningKey: 'h', unit: 'm·s⁻¹ (spectral amplitude)' },
+      { sym: 'V_Z', meaningKey: 'v', unit: 'm·s⁻¹ (spectral amplitude)' },
+      { sym: 'f_0', meaningKey: 'f0', unit: 'Hz' },
+      { sym: 'A_0', meaningKey: 'a0', unit: 'dimensionless' },
+      { sym: 'V_S', meaningKey: 'vs', unit: 'm·s⁻¹' },
+      { sym: 'H', meaningKey: 'H', unit: 'm' },
+      { sym: 'Z', meaningKey: 'Z', unit: 'kg·m⁻²·s⁻¹' },
+    ],
+    refIds: ['wathelet2004', 'wathelet2008', 'sesame2004'],
+  },
 }

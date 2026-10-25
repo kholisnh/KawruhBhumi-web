@@ -7,6 +7,8 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
 import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
 import { VesCurvePlot, VesLayersPanel, VesModelSvg, VesSummaryPanel, VesSurveyPanel } from '../components/workspace/resistivity/VesParts'
 import { useI18n } from '../i18n'
@@ -28,10 +30,14 @@ import { VES_LIMITS } from '../sim/resistivity/validation'
 
 export function ResistivityWorkspace() {
   const { d } = useI18n()
+  const shared = useSharedScenario<VesInput>('resistivity')
   const t = d.ves
   const s = useForwardState<VesInput, VesResult, VesScenarioId>({
     scenarios: vesScenarios,
-    initialScenario: 'two-layer-bedrock',
+    initialScenario: (shared?.scenarioId as VesScenarioId | undefined) ?? 'two-layer-bedrock',
+    initialInput: shared?.input,
+    autoRun: true,
+    storageKey: 'kb.scenario.resistivity',
     scenarioInput: useCallback((id: VesScenarioId) => vesScenarioToInput(id), []),
     validate: validateVes,
     run: (input) => runVesForward(input),
@@ -102,6 +108,7 @@ export function ResistivityWorkspace() {
           <Button variant="secondary" onClick={s.resetModel}>
             {d.wshared.resetModel}
           </Button>
+          <ShareButton methodId="resistivity" scenarioId={s.scenarioId} input={s.input} />
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
           <Button variant="secondary" size="sm" onClick={handleExportCsv} disabled={!s.result}>
             {d.wshared.exportCsv}
@@ -134,7 +141,7 @@ export function ResistivityWorkspace() {
           <VesSurveyPanel survey={s.input.survey} array={s.input.array} errors={s.errors} errDict={t.errors} patch={patchSurvey} setArray={setArray} />
           <VesLayersPanel layers={s.input.layers} errors={s.errors} errDict={t.errors} patch={patchLayer} add={addLayer} remove={removeLayer} />
           <Panel compact>
-            <p className="text-[10.5px] leading-relaxed text-gs-mist">
+            <p className="text-xs leading-relaxed text-gs-mist">
               {t.depthHint} {vesTotalDepth(s.input.layers).toFixed(2)} m
             </p>
           </Panel>

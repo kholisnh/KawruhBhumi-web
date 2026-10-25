@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const resistivityTheory: MethodTheory = {
   methodId: 'resistivity',
@@ -12,6 +12,7 @@ export const resistivityTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('resistivity-acquisition'),
         p(
           'A DC resistivity sounding uses four electrodes. Two current electrodes (A and B) inject a known current I into the ground; two potential electrodes (M and N) measure the resulting voltage difference ΔV. The ratio ΔV/I is a resistance, but it depends on the electrode geometry, so we convert it to apparent resistivity ρa, in ohm-metres.',
           'Sondir resistivitas DC memakai empat elektroda. Dua elektroda arus (A dan B) mengalirkan arus I yang diketahui ke dalam tanah; dua elektroda potensial (M dan N) mengukur beda tegangan ΔV. Rasio ΔV/I adalah hambatan, tetapi bergantung pada geometri elektroda, sehingga dikonversi menjadi resistivitas semu ρa dalam ohm-meter.',
@@ -80,6 +81,7 @@ export const resistivityTheory: MethodTheory = {
       },
       minutes: 6,
       blocks: [
+        figure('resistivity-aquifer'),
         p(
           'The forward direction is unambiguous: given layer resistivities and thicknesses, the equations above produce one sounding curve. The workspace lets you change those parameters and watch the curve respond. A resistive bottom layer pushes the right-hand part of the curve upward; a conductive layer produces a trough; increasing a layer thickness shifts its influence to larger spacings.',
           'Arah forward tidak ambigu: diberikan resistivitas dan ketebalan lapisan, persamaan di atas menghasilkan satu kurva sounding. Workspace memungkinkan Anda mengubah parameter itu dan mengamati respons kurvanya. Lapisan bawah resistif mendorong bagian kanan kurva ke atas; lapisan konduktif menghasilkan lembah; menambah ketebalan lapisan menggeser pengaruhnya ke jarak yang lebih besar.',

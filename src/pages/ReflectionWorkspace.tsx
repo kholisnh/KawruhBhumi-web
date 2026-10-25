@@ -7,6 +7,8 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
 import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { ShareButton } from '../components/ui/ShareButton'
+import { useSharedScenario } from '../lib/useSharedScenario'
 import { ReflGatherPanel, ReflLayersPanel, ReflModelPanel, ReflPicksPanel, ReflSummaryPanel, ReflSurveyPanel, ReflTracePanel } from '../components/workspace/reflection/ReflParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
 import { useI18n } from '../i18n'
@@ -18,10 +20,14 @@ import { validateReflection } from '../sim/reflection/validate'
 
 export function ReflectionWorkspace() {
   const { d } = useI18n()
+  const shared = useSharedScenario<ReflInput>('reflection')
   const t = d.refl
   const s = useForwardState<ReflInput, ReflResult, ReflScenarioId>({
     scenarios: reflScenarios,
-    initialScenario: 'sandShale',
+    initialScenario: (shared?.scenarioId as ReflScenarioId | undefined) ?? 'sandShale',
+    initialInput: shared?.input,
+    autoRun: true,
+    storageKey: 'kb.scenario.reflection',
     scenarioInput: useCallback((id: ReflScenarioId) => reflScenarioToInput(reflScenarios.find((x) => x.id === id) ?? reflScenarios[0]), []),
     validate: validateReflection,
     run: runReflectionForward,
@@ -78,6 +84,7 @@ export function ReflectionWorkspace() {
           <Button variant="secondary" onClick={s.resetModel}>
             {d.wshared.resetModel}
           </Button>
+          <ShareButton methodId="reflection" scenarioId={s.scenarioId} input={s.input} />
           <span className="mx-1 hidden h-5 w-px bg-black/5 sm:block" aria-hidden />
           <Button variant="secondary" size="sm" onClick={handleExportTraceCsv} disabled={!s.result}>
             {d.wshared.exportCsv} — {t.traceTitle}
@@ -176,7 +183,7 @@ export function ReflectionWorkspace() {
             <Panel
               title={t.diagTitle}
               actions={
-                <span className="gs-number text-[10.5px] text-gs-mist">
+                <span className="gs-number text-xs text-gs-mist">
                   max |amp| {fmt(s.result.diagnostics.maxAbsAmplitude, 3)} {t.relAmp}
                 </span>
               }

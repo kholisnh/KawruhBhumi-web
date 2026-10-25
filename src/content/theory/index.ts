@@ -5,6 +5,7 @@ import { gravityTheory } from './gravity'
 import { reflectionTheory } from './reflection'
 import { refractionTheory } from './refraction'
 import { resistivityTheory } from './resistivity'
+import { hvsrTheory } from './hvsr'
 import type { MethodTheory } from './types'
 
 export type { MethodTheory, TheoryBlock, TheoryChapter } from './types'
@@ -16,6 +17,7 @@ export const theoryByMethod: Record<MethodId, MethodTheory> = {
   reflection: reflectionTheory,
   refraction: refractionTheory,
   resistivity: resistivityTheory,
+  hvsr: hvsrTheory,
 }
 
 export const totalChapters = Object.values(theoryByMethod).reduce((sum, method) => sum + method.chapters.length, 0)

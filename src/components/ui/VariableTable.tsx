@@ -18,7 +18,7 @@ export function VariableTable({ symbolLabel, meaningLabel, unitLabel, rows }: Va
     <div className="overflow-x-auto rounded-xl border border-black/10">
       <table className="w-full min-w-[420px] text-left text-xs">
         <thead>
-          <tr className="border-b border-black/10 bg-gs-deep/80 text-[10px] tracking-wider text-gs-mist uppercase">
+          <tr className="border-b border-black/10 bg-gs-deep/80 text-xs tracking-wider text-gs-mist uppercase">
             <th className="px-3 py-2 font-semibold">{symbolLabel}</th>
             <th className="px-3 py-2 font-semibold">{meaningLabel}</th>
             <th className="px-3 py-2 font-semibold whitespace-nowrap">{unitLabel}</th>

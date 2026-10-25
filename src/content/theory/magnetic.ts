@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const magneticTheory: MethodTheory = {
   methodId: 'magnetic',
@@ -12,6 +12,7 @@ export const magneticTheory: MethodTheory = {
       },
       minutes: 4,
       blocks: [
+        figure('mag-acquisition'),
         p(
           'A magnetometer measures the magnitude of the local magnetic field, usually in nanotesla (nT). The Earth’s field is tens of thousands of nT; a buried object or a geological body adds a much smaller perturbation. We therefore remove the regional field and study the residual, called the total-field anomaly ΔT.',
           'Magnetometer mengukur besar medan magnet lokal, biasanya dalam nanotesla (nT). Medan bumi berkisar puluhan ribu nT; benda terkubur atau tubuh geologi menambahkan gangguan yang jauh lebih kecil. Karena itu medan regional dihilangkan dan sisanya dipelajari, disebut anomali medan total ΔT.',
@@ -80,6 +81,7 @@ export const magneticTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('mag-profile'),
         p(
           'A compact, shallow body produces a short-wavelength, high-amplitude anomaly. A deep body produces a broad, weak anomaly. A dipole’s peak-to-peak width is roughly proportional to its depth, and its amplitude falls as 1/z³. These rules of thumb allow a first estimate, but they are not an inversion.',
           'Tubuh dangkal yang kompak menghasilkan anomali panjang gelombang pendek dengan amplitudo tinggi. Tubuh dalam menghasilkan anomali lebar dan lemah. Lebar puncak-ke-puncak dipol kira-kira sebanding dengan kedalamannya, dan amplitudonya menurun sebagai 1/z³. Aturan praktis ini memberi perkiraan awal, tetapi bukan inversi.',

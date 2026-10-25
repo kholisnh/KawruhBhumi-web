@@ -24,7 +24,7 @@ export function MethodsPage() {
               <div className="flex items-start justify-between gap-3 p-4 pb-2">
                 <div>
                   <h2 className="text-base font-semibold text-gs-ice"><Link to={`/metode/${meta.id}`} className="hover:text-gs-cyan">{info.name}</Link></h2>
-                  <p className="gs-number mt-0.5 text-[10.5px] font-semibold tracking-widest" style={{ color: meta.accent }}>
+                  <p className="gs-number mt-0.5 text-xs font-semibold tracking-widest" style={{ color: meta.accent }}>
                     {info.abbr}
                   </p>
                 </div>
@@ -42,19 +42,19 @@ export function MethodsPage() {
                 <div className="mt-3 space-y-2 border-t border-black/8 pt-3">
                   <div>
                     <p className="gs-label">{tr(site.methodsPage.property, lang)}</p>
-                    <p className="mt-0.5 text-[11px] leading-relaxed text-gs-mist">{info.property}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-gs-mist">{info.property}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     to={`/teori/${meta.id}/${theoryByMethod[meta.id].chapters[0].id}`}
-                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-gs-raised px-3 py-1.5 text-[11px] font-semibold text-gs-ice transition-colors hover:bg-gs-deep"
+                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-gs-raised px-3 py-1.5 text-xs font-semibold text-gs-ice transition-colors hover:bg-gs-deep"
                   >
                     {tr(site.methodsPage.theory, lang)}
                   </Link>
                   <Link
                     to={meta.route}
-                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-gs-cyan px-3 py-1.5 text-[11px] font-semibold text-gs-white transition-colors hover:bg-[#2952D6]"
+                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-gs-cyan px-3 py-1.5 text-xs font-semibold text-gs-white transition-colors hover:bg-[#2952D6]"
                   >
                     {tr(site.methodsPage.simulator, lang)}
                   </Link>

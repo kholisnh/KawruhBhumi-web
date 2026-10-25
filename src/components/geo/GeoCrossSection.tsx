@@ -141,7 +141,7 @@ export function GeoCrossSection({
                 <text x={MARGIN.left + 8} y={y + 15} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.ice} opacity={0.92}>
                   L{i + 1} · εr {layer.epsR.toFixed(layer.epsR >= 100 ? 0 : 1)} · σ {layer.sigma} mS/m
                 </text>
-                <text x={MARGIN.left + 8} y={y + 30} fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} opacity={0.85}>
+                <text x={MARGIN.left + 8} y={y + 30} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} opacity={0.85}>
                   h = {thicknessLabel}
                 </text>
               </>
@@ -166,7 +166,7 @@ export function GeoCrossSection({
             <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={isMetal ? 'rgba(37,37,37,0.25)' : 'rgba(232,83,83,0.15)'} stroke={stroke} strokeWidth={1.6} />
             <line x1={cx - rx - 4} x2={cx + rx + 4} y1={cy} y2={cy} stroke={stroke} strokeOpacity={0.6} strokeWidth={0.8} />
             <line x1={cx} x2={cx} y1={cy - ry - 4} y2={cy + ry + 4} stroke={stroke} strokeOpacity={0.6} strokeWidth={0.8} />
-            <text x={cx} y={cy - ry - 7} textAnchor="middle" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={stroke}>
+            <text x={cx} y={cy - ry - 7} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={stroke}>
               T{i + 1}
             </text>
           </g>
@@ -223,13 +223,13 @@ export function GeoCrossSection({
             strokeWidth={1.2}
           />
         ))}
-        <text x={0} y={-26} textAnchor="middle" fontSize={10} fontFamily="JetBrains Mono, monospace" fill={chartColors.cyan}>
+        <text x={0} y={-26} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.cyan}>
           {labels.transmitter}
         </text>
       </g>
 
       {/* axes */}
-      <g fontFamily="JetBrains Mono, monospace" fontSize={10.5} fill={chartColors.mist}>
+      <g fontFamily="JetBrains Mono, monospace" fontSize={12} fill={chartColors.mist}>
         {xTicks.map((v) => (
           <text key={`xt-${v}`} x={xScale(v)} y={VIEW_H - MARGIN.bottom + 16} textAnchor="middle">
             {Number(v.toFixed(2))}
@@ -242,10 +242,10 @@ export function GeoCrossSection({
         ))}
         {showUnits && (
           <>
-            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={10}>
+            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={12}>
               {labels.distance} [m]
             </text>
-            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={10} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
+            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={12} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
               {labels.depth} [m]
             </text>
           </>

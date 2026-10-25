@@ -21,6 +21,7 @@ export function MethodGlyph({ id, accent, className = '' }: MethodGlyphProps) {
       {id === 'reflection' && <ReflectionGlyph accent={stroke} />}
       {id === 'refraction' && <RefractionGlyph accent={stroke} />}
       {id === 'resistivity' && <ResistivityGlyph accent={stroke} />}
+      {id === 'hvsr' && <HvsrGlyph accent={stroke} />}
     </svg>
   )
 }
@@ -183,6 +184,27 @@ function ResistivityGlyph({ accent }: { accent: string }) {
       <text x="222" y="98" textAnchor="end" fontSize="8" fontFamily="JetBrains Mono, monospace" fill="rgba(37,37,37,0.6)">
         ρ₂
       </text>
+    </g>
+  )
+}
+
+function HvsrGlyph({ accent }: { accent: string }) {
+  return (
+    <g>
+      <Surface accent={accent} y={34} />
+      <rect x="104" y="74" width="40" height="34" rx="6" fill={`${accent}18`} stroke={accent} strokeWidth="1.5" />
+      <circle cx="124" cy="91" r="7" fill="none" stroke={accent} strokeWidth="1.5" />
+      <path d="M 124 84 L 124 98 M 117 91 L 131 91" stroke={accent} strokeWidth="1" opacity="0.7" />
+      <text x="124" y="122" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono, monospace" fill={accent}>3C</text>
+      {[56, 192].map((x, i) => (
+        <path key={x} d={`M ${x} 34 C ${x + (i ? -18 : 18)} 62 ${x + (i ? -32 : 32)} 62 ${x + (i ? -46 : 46)} 34`} fill="none" stroke={accent} strokeWidth="1.2" opacity="0.5" />
+      ))}
+      <rect x="166" y="74" width="58" height="38" rx="7" fill="#FFFFFF" stroke="rgba(37,37,37,0.16)" />
+      <path d="M 174 104 L 186 104 L 196 84 L 207 104 L 216 104" fill="none" stroke={accent} strokeWidth="1.8" />
+      <line x1="196" y1="104" x2="196" y2="88" stroke="#E85353" strokeDasharray="2 3" />
+      <text x="196" y="126" textAnchor="middle" fontSize="8" fontFamily="JetBrains Mono, monospace" fill="rgba(37,37,37,0.7)">H/V</text>
+      <path d="M 12 116 L 228 114" stroke={accent} strokeWidth="1.5" fill="none" />
+      <path d="M 12 120 L 120 120 L 228 108" stroke="rgba(37,37,37,0.5)" strokeWidth="1.2" fill="none" strokeDasharray="5 4" />
     </g>
   )
 }

@@ -58,7 +58,7 @@ function Axes({
         </g>
       )}
       <line x1={MARGIN.left} x2={MARGIN.left + PLOT_W} y1={MARGIN.top} y2={MARGIN.top} stroke={chartColors.ice} strokeWidth={2} />
-      <g fontFamily="JetBrains Mono, monospace" fontSize={10.5} fill={chartColors.mist}>
+      <g fontFamily="JetBrains Mono, monospace" fontSize={12} fill={chartColors.mist}>
         {xTicks.map((v) => (
           <text key={`xt-${v}`} x={xScale(v)} y={VIEW_H - MARGIN.bottom + 16} textAnchor="middle">
             {Number(v.toFixed(2))}
@@ -71,10 +71,10 @@ function Axes({
         ))}
         {showUnits && (
           <>
-            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={10}>
+            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={12}>
               {labels.distance} [m]
             </text>
-            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={10} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
+            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={12} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
               {labels.depth} [m]
             </text>
           </>
@@ -156,7 +156,7 @@ export function AnomalySectionSvg({
                 strokeWidth={1.6}
                 strokeDasharray={b.offscreen ? '6 4' : undefined}
               />
-              <text x={x + Math.max(w, 2) / 2} y={y + 14} textAnchor="middle" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={b.color}>
+              <text x={x + Math.max(w, 2) / 2} y={y + 14} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={b.color}>
                 {b.label}
               </text>
             </g>
@@ -179,14 +179,14 @@ export function AnomalySectionSvg({
               strokeWidth={1.6}
               strokeDasharray={b.offscreen ? '6 4' : undefined}
             />
-            <text x={cx} y={cy - ry - 6} textAnchor="middle" fontSize={10.5} fontFamily="JetBrains Mono, monospace" fill={b.color}>
+            <text x={cx} y={cy - ry - 6} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={b.color}>
               {b.label}
             </text>
           </g>
         )
       })}
       <Axes xScale={xScale} yScale={yScale} lineLength={lineLength} displayDepth={displayDepth} labels={labels} showGrid={showGrid} showUnits={showUnits} />
-      <text x={MARGIN.left} y={MARGIN.top - 10} fontSize={10} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
+      <text x={MARGIN.left} y={MARGIN.top - 10} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist}>
         {labels.surface}
       </text>
     </svg>
@@ -261,7 +261,7 @@ export function LayersSectionSvg({
             <rect x={MARGIN.left} y={y} width={PLOT_W} height={Math.max(hPx, 0)} fill={layer.color} opacity={0.85} />
             {!isHalf && <line x1={MARGIN.left} x2={MARGIN.left + PLOT_W} y1={yScale(depthBottom)} y2={yScale(depthBottom)} stroke={chartColors.ice} strokeOpacity={0.25} strokeWidth={1.2} />}
             {hPx > 22 && (
-              <text x={MARGIN.left + 8} y={y + 14} fontSize={11} fontFamily="JetBrains Mono, monospace" fill={chartColors.ice} opacity={0.95}>
+              <text x={MARGIN.left + 8} y={y + 14} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.ice} opacity={0.95}>
                 {layer.label}
               </text>
             )}

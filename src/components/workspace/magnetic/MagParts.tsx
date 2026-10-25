@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useI18n } from '../../../i18n'
+import { useFieldHelp } from '../../../content/fieldHelp'
 import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { MagBody, MagBodyKind, MagInput, MagMap, MagResult, MagSurvey } from '../../../sim/magnetic/types'
@@ -18,15 +19,16 @@ const ACCENT = '#60CBFF'
 
 export function MagSurveyPanel({ survey, errors, errDict, patch }: { survey: MagSurvey; errors: FieldError[]; errDict: Record<string, string>; patch: (p: Partial<MagSurvey>) => void }) {
   const { d } = useI18n()
+  const help = useFieldHelp()
   const t = d.mag
   const errFor = useWsErrorFor(errors, errDict)
   return (
     <Panel title={t.surveyTitle}>
       <div className="grid grid-cols-2 gap-3">
-        <NumberField label={t.field} unit="nT" value={survey.fieldNT} onChange={(v) => patch({ fieldNT: v })} error={errFor('survey.fieldNT')} />
-        <NumberField label={t.inclination} unit="°" value={survey.inclinationDeg} onChange={(v) => patch({ inclinationDeg: v })} error={errFor('survey.inclinationDeg')} />
+        <NumberField label={t.field} unit="nT" value={survey.fieldNT} onChange={(v) => patch({ fieldNT: v })} error={errFor('survey.fieldNT')} help={help('mag.field')} />
+        <NumberField label={t.inclination} unit="°" value={survey.inclinationDeg} onChange={(v) => patch({ inclinationDeg: v })} error={errFor('survey.inclinationDeg')} help={help('mag.inclination')} />
         <NumberField label={d.wshared.lineLength} unit="m" value={survey.lineLength} onChange={(v) => patch({ lineLength: v })} error={errFor('survey.lineLength')} />
-        <NumberField label={d.wshared.spacing} unit="m" value={survey.stationSpacing} onChange={(v) => patch({ stationSpacing: v })} error={errFor('survey.stationSpacing')} />
+        <NumberField label={d.wshared.spacing} unit="m" value={survey.stationSpacing} onChange={(v) => patch({ stationSpacing: v })} error={errFor('survey.stationSpacing')} help={help('mag.spacing')} />
         <NumberField label={t.mapLines} value={survey.mapLines} onChange={(v) => patch({ mapLines: Math.round(v) })} step={1} error={errFor('survey.mapLines')} />
         <NumberField label={t.mapLineSpacing} unit="m" value={survey.mapLineSpacing} onChange={(v) => patch({ mapLineSpacing: v })} error={errFor('survey.mapLineSpacing')} />
         <NumberField label={d.wshared.noise} unit="nT" value={survey.noiseNT} onChange={(v) => patch({ noiseNT: v })} error={errFor('survey.noiseNT')} />
@@ -66,8 +68,8 @@ export function MagBodiesPanel({
               <Badge soft color={BODY_COLORS[i % BODY_COLORS.length]}>
                 {body.kind === 'dipole' ? t.kindSphere : t.kindPrism}
               </Badge>
-              <span className="gs-number text-[10.5px] text-gs-mist">{body.id}</span>
-              <button type="button" onClick={() => remove(body.id)} className="ml-auto text-[11px] text-gs-danger transition-colors hover:text-gs-danger/80">
+              <span className="gs-number text-xs text-gs-mist">{body.id}</span>
+              <button type="button" onClick={() => remove(body.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
                 {t.removeBody}
               </button>
             </div>
@@ -122,7 +124,7 @@ export function MagModelPanel({ input, dispDepth }: { input: MagInput; dispDepth
   return (
     <Panel title={d.mag.crossTitle}>
       <AnomalySectionSvg bodies={shapes} lineLength={input.survey.lineLength} displayDepth={dispDepth} accent={ACCENT} labels={{ distance: d.wshared.distance, depth: d.wshared.depth, surface: d.wshared.surface }} />
-      {anyOff && <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{d.wshared.offPlane}</p>}
+      {anyOff && <p className="mt-2 text-xs leading-relaxed text-gs-mist">{d.wshared.offPlane}</p>}
     </Panel>
   )
 }
@@ -203,7 +205,7 @@ export function MagMapPanel({
   return (
     <div>
       <Plot data={data} layout={layout} onReady={onReady} style={{ minHeight: height }} />
-      <p className="mt-1 text-[10.5px] leading-relaxed text-gs-mist">{t.mapNote}</p>
+      <p className="mt-1 text-xs leading-relaxed text-gs-mist">{t.mapNote}</p>
     </div>
   )
 }
@@ -227,7 +229,7 @@ export function MagSummaryPanel({ result, errDict, showUnits }: { result: MagRes
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-gs-raised/70 text-[10px] uppercase tracking-wide text-gs-mist">
+              <tr className="border-b border-gs-raised/70 text-xs uppercase tracking-wide text-gs-mist">
                 <th className="py-1.5 pr-3 font-medium">ID</th>
                 <th className="py-1.5 pr-3 font-medium">{t.kind}</th>
                 <th className="py-1.5 pr-3 font-medium">{d.wshared.chi}</th>
@@ -238,7 +240,7 @@ export function MagSummaryPanel({ result, errDict, showUnits }: { result: MagRes
             </thead>
             <tbody>
               {result.bodies.map((b) => (
-                <tr key={b.id} className="border-b border-gs-raised/40 text-[11.5px] text-gs-ice">
+                <tr key={b.id} className="border-b border-gs-raised/40 text-xs text-gs-ice">
                   <td className="gs-number py-1.5 pr-3 text-gs-mist">{b.id}</td>
                   <td className="py-1.5 pr-3">{b.kind === 'dipole' ? t.kindSphere : t.kindPrism}</td>
                   <td className="gs-number py-1.5 pr-3">{fmt(b.chi, 3)}</td>
@@ -250,7 +252,7 @@ export function MagSummaryPanel({ result, errDict, showUnits }: { result: MagRes
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-[10.5px] leading-relaxed text-gs-mist">{t.momentNote}</p>
+        <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.momentNote}</p>
       </Panel>
       <WsWarningList warnings={dg.warnings} dict={errDict} />
     </div>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { InfoTip } from './InfoTip'
 
 interface SelectFieldProps<T extends string> {
   label: string
@@ -8,14 +9,16 @@ interface SelectFieldProps<T extends string> {
   compact?: boolean
   className?: string
   icon?: ReactNode
+  help?: string
 }
 
-export function SelectField<T extends string>({ label, value, onChange, options, compact, className = '', icon }: SelectFieldProps<T>) {
+export function SelectField<T extends string>({ label, value, onChange, options, compact, className = '', icon, help }: SelectFieldProps<T>) {
   return (
     <label className={`block ${className}`}>
-      <span className={`mb-1 items-center gap-1.5 text-[11px] font-medium text-gs-mist ${compact ? 'sr-only' : 'flex'}`}>
+      <span className={`mb-1 items-center gap-1.5 text-xs font-medium text-gs-mist ${compact ? 'sr-only' : 'flex'}`}>
         {icon}
         {label}
+        {help && <InfoTip label={label}>{help}</InfoTip>}
       </span>
       <select
         aria-label={label}

@@ -62,7 +62,7 @@
 
 @layer components {
   .gs-label {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -111,10 +111,59 @@
 .js-plotly-plot .plotly .modebar {
   background: transparent !important;
 }
+.js-plotly-plot .plotly .modebar-group {
+  background-color: transparent !important;
+}
+.js-plotly-plot .plotly .modebar-btn {
+  border-radius: 6px;
+}
+.js-plotly-plot .plotly .modebar-btn:hover {
+  background-color: rgba(54, 100, 244, 0.1) !important;
+}
 .js-plotly-plot .plotly .modebar-btn path {
   fill: var(--color-gs-mist) !important;
 }
 
 input[type='range'] {
   accent-color: var(--color-gs-primary);
+}
+
+@media print {
+  .no-print,
+  .modebar {
+    display: none !important;
+  }
+  button {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .sticky {
+    position: static !important;
+  }
+  .js-plotly-plot {
+    break-inside: avoid;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}
+
+
+.gs-plot:fullscreen {
+  background: #ffffff;
+  padding: 1rem;
+}
+.gs-plot:fullscreen > [role='img'] {
+  height: calc(100vh - 2rem) !important;
+  min-height: 0 !important;
+}
+.gs-plot:fullscreen .gs-plot-fullscreen {
+  top: 0.75rem;
+  right: 0.75rem;
+  bottom: auto;
+  opacity: 1;
 }

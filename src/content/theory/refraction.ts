@@ -1,4 +1,4 @@
-import { eq, list, note, p, type MethodTheory } from './types'
+import { eq, figure, list, note, p, type MethodTheory } from './types'
 
 export const refractionTheory: MethodTheory = {
   methodId: 'refraction',
@@ -12,6 +12,7 @@ export const refractionTheory: MethodTheory = {
       },
       minutes: 4,
       blocks: [
+        figure('refraction-acquisition'),
         p(
           'In a refraction survey a source is triggered at the surface and a line of receivers records the ground motion. Instead of the whole waveform, we usually pick the first arrival: the earliest energy that reaches each receiver. This gives a travel time t for every source–receiver offset x.',
           'Pada survei refraksi, sumber dipicu di permukaan dan sederet receiver merekam gerakan tanah. Alih-alih seluruh bentuk gelombang, kita biasanya memilih tiba pertama: energi paling awal yang mencapai setiap receiver. Ini memberi waktu tempuh t untuk setiap offset sumber–receiver x.',
@@ -72,6 +73,7 @@ export const refractionTheory: MethodTheory = {
       },
       minutes: 5,
       blocks: [
+        figure('refraction-airport'),
         p(
           'For a two-layer model the procedure is direct: fit the direct-wave branch to get V₁, fit the head-wave branch to get V₂, read the intercept, and solve for h. For more layers the same idea repeats, but each deeper branch depends on all the layers above it. This is why interpretation is usually done with forward modelling and layer stripping rather than a single formula.',
           'Untuk model dua lapis prosedurnya langsung: fit cabang gelombang langsung untuk V₁, fit cabang gelombang kepala untuk V₂, baca intercept, lalu selesaikan h. Untuk lebih banyak lapisan, gagasan yang sama berulang, tetapi setiap cabang lebih dalam bergantung pada semua lapisan di atasnya. Karena itu interpretasi biasanya dilakukan dengan pemodelan forward dan layer stripping, bukan satu rumus tunggal.',
