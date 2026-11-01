@@ -18,7 +18,7 @@ export function Stat({ label, value, unit, hint, accent }: StatProps) {
         </span>
         {unit && <span className="gs-number text-xs text-gs-mist">{unit}</span>}
       </div>
-      {hint && <div className="mt-0.5 text-xs leading-snug text-gs-mist/80">{hint}</div>}
+      {hint && <div className="mt-0.5 text-xs leading-snug text-gs-mist">{hint}</div>}
     </div>
   )
 }

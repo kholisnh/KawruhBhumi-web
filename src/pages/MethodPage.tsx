@@ -41,7 +41,7 @@ export function MethodPage() {
       <header className="mt-4 flex flex-wrap items-start justify-between gap-5">
         <div className="max-w-3xl">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="gs-number text-xs font-bold tracking-widest" style={{ color: meta.accent }}>
+            <span className="gs-number text-xs font-bold tracking-widest" style={{ color: meta.ink }}>
               {info.abbr}
             </span>
             <Badge soft color={meta.accent}>

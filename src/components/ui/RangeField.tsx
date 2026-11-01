@@ -40,7 +40,7 @@ export function RangeField({ label, value, onChange, min, max, step, unit, forma
         value={Number.isFinite(value) ? value : min}
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-black/5 disabled:opacity-50"
+        className="gs-range h-11 w-full cursor-pointer appearance-none bg-transparent disabled:opacity-50"
       />
       {error && <p className="mt-0.5 text-xs text-gs-danger">{error}</p>}
     </div>

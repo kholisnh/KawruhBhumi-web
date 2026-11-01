@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { exportCsv, exportPlotPng, exportSvgPng } from '../components/charts/exporters'
 import { AssumptionPanel } from '../components/ui/AssumptionPanel'
 import { Button } from '../components/ui/Button'
@@ -6,16 +6,33 @@ import { Panel } from '../components/ui/Card'
 import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
-import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { StatusText, WorkspaceShell, useForwardState, usePersistedBoolean } from '../components/workspace/common'
 import { ShareButton } from '../components/ui/ShareButton'
 import { useSharedScenario } from '../lib/useSharedScenario'
 import { RefrLayersPanel, RefrModelPanel, RefrSeismogramPanel, RefrSummaryPanel, RefrSurveyPanel, RefrTravelTimePlot } from '../components/workspace/refraction/RefrParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
+import { ComparePanel } from '../components/workspace/r2/ComparePanel'
+import { PresetCards } from '../components/workspace/r2/PresetCards'
+import { PresetThumbnail } from '../components/workspace/r2/PresetThumbnail'
+import { SweepPanel } from '../components/workspace/r2/SweepPanel'
+import { ChallengePanel } from '../components/workspace/r3/ChallengePanel'
+import { useChallenge } from '../components/workspace/r3/useChallenge'
+import { cleanRefractionInput, perturbRefractionInput, refractionChallengeCurve } from '../components/workspace/r3/targets'
+import type { CompareMetric, ComparePlotSpec, CompareSeries, ComparisonSnapshot, PresetDifficulty, SweepMetric, SweepParameter } from '../components/workspace/r2/types'
 import { useI18n } from '../i18n'
+import { fmt } from '../sim/core/format'
 import { refrScenarios, refrScenarioToInput, refrUid, type RefrScenarioId } from '../sim/refraction/model'
 import { runRefractionForward } from '../sim/refraction/solver'
 import type { RefrInput, RefrLayer, RefrResult, RefrSurvey } from '../sim/refraction/types'
 import { validateRefraction } from '../sim/refraction/validate'
+
+const refractionDifficulty: Record<RefrScenarioId, PresetDifficulty> = {
+  soilBedrock: 'easy',
+  threeLayer: 'medium',
+  weathered: 'medium',
+  velocityInversion: 'advanced',
+  deepBedrock: 'advanced',
+}
 
 export function RefractionWorkspace() {
   const { d } = useI18n()
@@ -32,15 +49,120 @@ export function RefractionWorkspace() {
     run: runRefractionForward,
     clone: (i) => structuredClone(i),
   })
-  const [showGrid, setShowGrid] = useState(true)
-  const [showUnits, setShowUnits] = useState(true)
-  const [showRays, setShowRays] = useState(true)
-  const [wiggle, setWiggle] = useState(true)
-  const [balance, setBalance] = useState(true)
-  const [showPicks, setShowPicks] = useState(false)
+  const [showGrid, setShowGrid] = usePersistedBoolean('kb.display.refraction.grid', true)
+  const [showUnits, setShowUnits] = usePersistedBoolean('kb.display.refraction.units', true)
+  const [showRays, setShowRays] = usePersistedBoolean('kb.display.refraction.rays', true)
+  const [wiggle, setWiggle] = usePersistedBoolean('kb.display.refraction.wiggle', true)
+  const [balance, setBalance] = usePersistedBoolean('kb.display.refraction.balance', true)
+  const [showPicks, setShowPicks] = usePersistedBoolean('kb.display.refraction.picks', false)
   const travelEl = useRef<HTMLDivElement | null>(null)
   const recordEl = useRef<HTMLDivElement | null>(null)
   const recordSvgEl = useRef<SVGSVGElement | null>(null)
+  const [pinned, setPinned] = useState<ComparisonSnapshot | null>(null)
+  const challengeInputKey = useMemo(() => JSON.stringify(s.input), [s.input])
+  const challenge = useChallenge<RefrInput>({
+    input: s.input,
+    inputKey: challengeInputKey,
+    makeTarget: perturbRefractionInput,
+    computeCurve: (input) => refractionChallengeCurve(runRefractionForward(cleanRefractionInput(input)), `${d.wshared.distance} (m)`, `${t.travelTitle} (ms)`),
+  })
+
+  const presetItems = useMemo(
+    () =>
+      refrScenarios.map((scenario) => {
+        const result = runRefractionForward(refrScenarioToInput(scenario))
+        const level = refractionDifficulty[scenario.id]
+        const depth = result.diagnostics.firstRefractorDepthM
+        return {
+          id: scenario.id,
+          label: t.scenarios[scenario.id],
+          difficulty: d.wshared.r2.difficulty[level],
+          level,
+          expected: depth === null ? '—' : `${fmt(depth, 1)} m`,
+          thumbnail: <PresetThumbnail method="refraction" />,
+        }
+      }),
+    [d, t],
+  )
+
+  const compareMetrics = useMemo<CompareMetric[]>(() => {
+    if (!s.result) return []
+    return [
+      { id: 'arrival', label: d.wshared.r2.maxArrival, unit: 'ms', value: s.result.diagnostics.maxFirstArrivalMs },
+      {
+        id: 'depth',
+        label: t.depthEstimate,
+        unit: 'm',
+        value: s.result.diagnostics.firstRefractorDepthM ?? Number.NaN,
+      },
+      { id: 'vdirect', label: t.vDirect, unit: 'm/s', value: s.result.diagnostics.vDirectMps, format: (value) => String(Math.round(value)) },
+      { id: 'nref', label: t.nRefracted, value: s.result.diagnostics.nRefractedFirstArrivals, format: (value) => String(Math.round(value)) },
+    ]
+  }, [d, s.result, t])
+
+  const compareSeries = useMemo<CompareSeries[]>(
+    () => (s.result ? [{ name: t.firstArrivalsClean, x: s.result.x, y: s.result.firstArrivalCleanMs }] : []),
+    [s.result, t],
+  )
+
+  const comparePlot = useMemo<ComparePlotSpec>(
+    () => ({ xTitle: `${d.wshared.distance} (m)`, yTitle: `${t.travelTitle} (ms)` }),
+    [d, t],
+  )
+
+  const pinResult = () => {
+    if (!s.result) return
+    setPinned({
+      scenarioLabel: t.scenarios[s.scenarioId],
+      metrics: compareMetrics,
+      series: compareSeries,
+      plot: comparePlot,
+    })
+  }
+
+  const sweepParameters = useMemo<SweepParameter<RefrInput>[]>(() => {
+    const first = s.input.layers[0]
+    if (!first) return []
+    const maxSpread = Math.min(2000, Math.max(5, 3999 * s.input.survey.geophoneSpacing))
+    return [
+      {
+        id: 'thickness',
+        label: t.thickness,
+        unit: 'm',
+        min: 0.1,
+        max: 200,
+        get: (input) => input.layers[0]?.thickness ?? 0,
+        apply: (input, value) => ({
+          ...input,
+          layers: input.layers.map((layer, index) => (index === 0 ? { ...layer, thickness: value } : layer)),
+        }),
+      },
+      {
+        id: 'spread',
+        label: t.spread,
+        unit: 'm',
+        min: 5,
+        max: maxSpread,
+        get: (input) => input.survey.spreadLength,
+        apply: (input, value) => ({ ...input, survey: { ...input.survey, spreadLength: value } }),
+      },
+    ]
+  }, [s.input.layers, s.input.survey.geophoneSpacing, t])
+
+  const sweepMetrics = useMemo<SweepMetric<RefrResult>[]>(
+    () => [
+      { id: 'depth', label: t.depthEstimate, unit: 'm', get: (result) => result.diagnostics.firstRefractorDepthM ?? Number.NaN },
+      { id: 'arrival', label: d.wshared.r2.maxArrival, unit: 'ms', get: (result) => result.diagnostics.maxFirstArrivalMs },
+    ],
+    [d, t],
+  )
+
+  const prepareSweep = useCallback((input: RefrInput) => {
+    const clone = structuredClone(input)
+    clone.survey.noiseMs = 0
+    clone.survey.traceNoisePercent = 0
+    return clone
+  }, [])
 
   const patchSurvey = (p: Partial<RefrSurvey>) => s.setInput((prev) => ({ ...prev, survey: { ...prev.survey, ...p } }))
   const patchLayer = (id: string, key: string, value: number) =>
@@ -126,6 +248,7 @@ export function RefractionWorkspace() {
               options={s.scenarioIds.map((id) => ({ value: id, label: t.scenarios[id] }))}
               compact
             />
+            <PresetCards items={presetItems} activeId={s.scenarioId} onSelect={(id) => s.loadScenario(id as RefrScenarioId)} />
           </Panel>
           <RefrSurveyPanel survey={s.input.survey} errors={s.errors} errDict={t.errors} patch={patchSurvey} />
           <RefrLayersPanel layers={s.input.layers} errors={s.errors} errDict={t.errors} patch={patchLayer} add={addLayer} remove={removeLayer} />
@@ -191,6 +314,39 @@ export function RefractionWorkspace() {
           </Panel>
           <RefrModelPanel input={s.input} result={s.result} showRays={showRays} />
           {s.result && <RefrSummaryPanel result={s.result} input={s.input} errDict={{ ...t.warnings, ...t.errors }} />}
+          <ComparePanel
+            pinned={pinned}
+            currentMetrics={compareMetrics}
+            currentSeries={compareSeries}
+            plot={comparePlot}
+            currentScenarioLabel={t.scenarios[s.scenarioId]}
+            canPin={Boolean(s.result) && !s.dirty}
+            stale={s.dirty}
+            onPin={pinResult}
+            onClear={() => setPinned(null)}
+          />
+          <SweepPanel
+            input={s.input}
+            parameters={sweepParameters}
+            metrics={sweepMetrics}
+            run={runRefractionForward}
+            prepare={prepareSweep}
+            disabled={s.errors.length > 0}
+          />
+
+          <ChallengePanel
+            target={challenge.target}
+            active={challenge.active}
+            stale={challenge.stale}
+            canStart={s.errors.length === 0}
+            canCheck={s.errors.length === 0}
+            onStart={challenge.start}
+            onCheck={challenge.check}
+            onReset={() => {
+              s.resetModel()
+              challenge.resetCheck()
+            }}
+          />
         </>
       }
       bottom={

@@ -116,7 +116,7 @@ export function HvsrScenarioPanel({
           <NumberField label={t.nFreq} value={survey.nFreq} onChange={(v) => patch({ nFreq: Math.round(v) })} step={1} error={errFor('survey.nFreq')} />
         </div>
         <details className="rounded-lg border border-black/8 bg-gs-deep/45 px-3 py-2">
-          <summary className="cursor-pointer text-xs font-medium text-gs-mist">{t.advanced}</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-xs font-medium text-gs-mist">{t.advanced}</summary>
           <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.advancedHint}</p>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <NumberField label={t.qs} value={survey.qs} onChange={(v) => patch({ qs: v })} error={errFor('survey.qs')} help={help('hvsr.qs')} />
@@ -173,7 +173,7 @@ export function HvsrModelPanel({
                   <button
                     type="button"
                     onClick={() => removeLayer(layer.id)}
-                    className="text-xs font-medium text-gs-danger hover:text-gs-danger/80"
+                    className="inline-flex min-h-11 items-center px-2 text-xs font-medium text-gs-danger hover:underline"
                   >
                     {t.removeLayer}
                   </button>
@@ -237,7 +237,7 @@ export function HvsrInversionPanel({
         <NumberField label={t.layerCount} value={settings.layerCount} onChange={(v) => patch({ layerCount: Math.round(v) })} step={1} help={help('hvsr.layers')} />
       </div>
       <details className="mt-3 rounded-lg border border-black/8 bg-gs-deep/45 px-3 py-2">
-        <summary className="cursor-pointer text-xs font-medium text-gs-mist">{t.advanced}</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-xs font-medium text-gs-mist">{t.advanced}</summary>
         <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.advancedHint}</p>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <NumberField label={t.initialSamples} value={settings.initialSamples} onChange={(v) => patch({ initialSamples: Math.round(v) })} step={50} />

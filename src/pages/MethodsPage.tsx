@@ -23,8 +23,8 @@ export function MethodsPage() {
             <Card key={meta.id} hover accent={meta.accent} className="flex flex-col overflow-hidden">
               <div className="flex items-start justify-between gap-3 p-4 pb-2">
                 <div>
-                  <h2 className="text-base font-semibold text-gs-ice"><Link to={`/metode/${meta.id}`} className="hover:text-gs-cyan">{info.name}</Link></h2>
-                  <p className="gs-number mt-0.5 text-xs font-semibold tracking-widest" style={{ color: meta.accent }}>
+                  <h2 className="text-base font-semibold text-gs-ice"><Link to={`/metode/${meta.id}`} className="inline-flex min-h-11 items-center hover:text-gs-cyan">{info.name}</Link></h2>
+                  <p className="gs-number mt-0.5 text-xs font-semibold tracking-widest" style={{ color: meta.ink }}>
                     {info.abbr}
                   </p>
                 </div>

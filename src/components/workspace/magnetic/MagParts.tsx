@@ -5,6 +5,7 @@ import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { MagBody, MagBodyKind, MagInput, MagMap, MagResult, MagSurvey } from '../../../sim/magnetic/types'
 import { Plot, type PlotlyModule } from '../../charts/Plot'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Badge } from '../../ui/Badge'
 import { Button } from '../../ui/Button'
 import { Panel } from '../../ui/Card'
@@ -29,11 +30,15 @@ export function MagSurveyPanel({ survey, errors, errDict, patch }: { survey: Mag
         <NumberField label={t.inclination} unit="°" value={survey.inclinationDeg} onChange={(v) => patch({ inclinationDeg: v })} error={errFor('survey.inclinationDeg')} help={help('mag.inclination')} />
         <NumberField label={d.wshared.lineLength} unit="m" value={survey.lineLength} onChange={(v) => patch({ lineLength: v })} error={errFor('survey.lineLength')} />
         <NumberField label={d.wshared.spacing} unit="m" value={survey.stationSpacing} onChange={(v) => patch({ stationSpacing: v })} error={errFor('survey.stationSpacing')} help={help('mag.spacing')} />
-        <NumberField label={t.mapLines} value={survey.mapLines} onChange={(v) => patch({ mapLines: Math.round(v) })} step={1} error={errFor('survey.mapLines')} />
-        <NumberField label={t.mapLineSpacing} unit="m" value={survey.mapLineSpacing} onChange={(v) => patch({ mapLineSpacing: v })} error={errFor('survey.mapLineSpacing')} />
-        <NumberField label={d.wshared.noise} unit="nT" value={survey.noiseNT} onChange={(v) => patch({ noiseNT: v })} error={errFor('survey.noiseNT')} />
-        <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberField label={t.mapLines} value={survey.mapLines} onChange={(v) => patch({ mapLines: Math.round(v) })} step={1} error={errFor('survey.mapLines')} />
+          <NumberField label={t.mapLineSpacing} unit="m" value={survey.mapLineSpacing} onChange={(v) => patch({ mapLineSpacing: v })} error={errFor('survey.mapLineSpacing')} />
+          <NumberField label={d.wshared.noise} unit="nT" value={survey.noiseNT} onChange={(v) => patch({ noiseNT: v })} error={errFor('survey.noiseNT')} />
+          <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
+        </div>
+      </AdvancedSection>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -69,7 +74,7 @@ export function MagBodiesPanel({
                 {body.kind === 'dipole' ? t.kindSphere : t.kindPrism}
               </Badge>
               <span className="gs-number text-xs text-gs-mist">{body.id}</span>
-              <button type="button" onClick={() => remove(body.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
+              <button type="button" onClick={() => remove(body.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-xs text-gs-danger transition-colors hover:underline">
                 {t.removeBody}
               </button>
             </div>

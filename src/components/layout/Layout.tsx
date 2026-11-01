@@ -7,7 +7,7 @@ import { Navbar } from './Navbar'
 function PageLoader() {
   const { d } = useI18n()
   return (
-    <div className="flex min-h-[50vh] items-center justify-center gap-3 text-sm text-gs-mist">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center gap-3 text-sm text-gs-mist">
       <span className="h-4 w-4 animate-spin rounded-full border-2 border-gs-cyan/30 border-t-gs-cyan" aria-hidden />
       {d.common.loadingPlot}
     </div>
@@ -64,19 +64,22 @@ function ScrollManager() {
 }
 
 export function Layout() {
+  const { d } = useI18n()
+  const location = useLocation()
+  const hash = typeof window === 'undefined' ? '' : window.location.hash
   return (
     <div className="flex min-h-screen flex-col">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-lg focus:bg-gs-cyan focus:px-3 focus:py-2 focus:text-xs focus:font-semibold focus:text-gs-navy"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-gs-cyan focus:px-3 focus:py-2 focus:text-xs focus:font-semibold focus:text-gs-navy"
       >
-        Skip to content
+        {d.common.skipToContent}
       </a>
       <Navbar />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1">
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
-            <Outlet />
+            <Outlet key={`${location.key}${hash}`} />
           </Suspense>
         </ErrorBoundary>
       </main>

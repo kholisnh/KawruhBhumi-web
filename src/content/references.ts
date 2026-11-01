@@ -381,7 +381,7 @@ export const references: Reference[] = [
     type: 'case',
     methods: ['reflection'],
     title: 'Integrated Magnetotelluric (MT), Gravity and Seismic Study of Lower Kutai Basin Configuration',
-    authors: 'Irawati, S. M., Hidayat, Wijanarko, E., Grandis, H.',
+    authors: 'Irawati, S. M., Hidayat, H., Wijanarko, E., Grandis, H.',
     year: 2022,
     venue: 'Journal of Engineering and Technological Sciences 54(1), 220103',
     url: 'https://doi.org/10.5614/j.eng.technol.sci.2022.54.1.3',

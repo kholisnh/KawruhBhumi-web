@@ -23,7 +23,7 @@ export function SimulatorHub() {
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <h3 className="text-sm font-semibold text-gs-ice">{info.name}</h3>
-                    <p className="gs-number text-xs tracking-widest" style={{ color: meta.accent }}>
+                    <p className="gs-number text-xs tracking-widest" style={{ color: meta.ink }}>
                       {info.abbr}
                     </p>
                   </div>

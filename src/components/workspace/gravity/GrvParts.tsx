@@ -5,6 +5,7 @@ import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { GrvBody, GrvInput, GrvMap, GrvResult, GrvSurvey } from '../../../sim/gravity/types'
 import { Plot, type PlotlyModule } from '../../charts/Plot'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Badge } from '../../ui/Badge'
 import { Button } from '../../ui/Button'
 import { Panel } from '../../ui/Card'
@@ -29,9 +30,13 @@ export function GrvSurveyPanel({ survey, errors, errDict, patch }: { survey: Grv
         <NumberField label={d.wshared.spacing} unit="m" value={survey.stationSpacing} onChange={(v) => patch({ stationSpacing: v })} error={errFor('survey.stationSpacing')} help={help('grv.depth')} />
         <NumberField label={t.mapLines} value={survey.mapLines} onChange={(v) => patch({ mapLines: Math.round(v) })} step={1} error={errFor('survey.mapLines')} />
         <NumberField label={t.mapLineSpacing} unit="m" value={survey.mapLineSpacing} onChange={(v) => patch({ mapLineSpacing: v })} error={errFor('survey.mapLineSpacing')} />
-        <NumberField label={d.wshared.noise} unit="mGal" value={survey.noiseMGal} onChange={(v) => patch({ noiseMGal: v })} error={errFor('survey.noiseMGal')} />
-        <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberField label={d.wshared.noise} unit="mGal" value={survey.noiseMGal} onChange={(v) => patch({ noiseMGal: v })} error={errFor('survey.noiseMGal')} />
+          <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
+        </div>
+      </AdvancedSection>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -67,7 +72,7 @@ export function GrvBodiesPanel({
                 {body.kind === 'sphere' ? t.kindSphere : t.kindPrism}
               </Badge>
               <span className="gs-number text-xs text-gs-mist">{body.id}</span>
-              <button type="button" onClick={() => remove(body.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
+              <button type="button" onClick={() => remove(body.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-xs text-gs-danger transition-colors hover:underline">
                 {t.removeBody}
               </button>
             </div>

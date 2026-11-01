@@ -3,6 +3,7 @@ import { useFieldHelp } from '../../../content/fieldHelp'
 import { fillTemplate, fmt } from '../../../sim/core/format'
 import type { GprResult } from '../../../sim/gpr/types'
 import type { FieldError } from '../../../sim/gpr/validate'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Button } from '../../ui/Button'
 import { NumberField } from '../../ui/NumberField'
 import { RangeField } from '../../ui/RangeField'
@@ -39,12 +40,12 @@ export function ErrorList({ errors }: { errors: FieldError[] }) {
         {errors.slice(0, 6).map((e, i) => {
           const template = (d.ws.errors as Record<string, string>)[e.key] ?? e.key
           return (
-            <li key={`${e.path}-${i}`} className="gs-number text-xs text-gs-danger/90">
+            <li key={`${e.path}-${i}`} className="gs-number text-xs text-gs-danger">
               {e.path} — {fillTemplate(template, e.params ?? {})}
             </li>
           )
         })}
-        {errors.length > 6 && <li className="text-xs text-gs-danger/80">…</li>}
+        {errors.length > 6 && <li className="text-xs text-gs-danger">…</li>}
       </ul>
     </div>
   )
@@ -112,51 +113,53 @@ export function SurveyPanelFields({ survey, onPatch, errorFor }: SurveyPanelProp
         error={errorFor('survey.traceSpacing')}
         help={help('gpr.spacing')}
       />
-      <div className="grid grid-cols-2 gap-3">
-        <NumberField
-          label={t.lineLength}
-          value={survey.lineLength}
-          onChange={(v) => onPatch({ lineLength: v })}
-          unit="m"
-          error={errorFor('survey.lineLength')}
-        />
-        <NumberField
-          label={t.seed}
-          value={survey.seed}
-          onChange={(v) => onPatch({ seed: Math.round(v) })}
-          error={errorFor('survey.seed')}
-        />
-      </div>
-      <div className="flex items-end gap-3">
-        <div className="flex-1">
-          <NumberField
-            label={t.timeWindow}
-            value={survey.timeWindowNs ?? NaN}
-            onChange={(v) => onPatch({ timeWindowNs: Number.isNaN(v) ? 2 : v })}
-            unit="ns"
-            disabled={autoWindow}
-            error={autoWindow ? undefined : errorFor('survey.timeWindowNs')}
-          />
-        </div>
-        <div className="pb-5">
-          <Toggle
-            label={t.timeWindowAuto}
-            checked={autoWindow}
-            onChange={(checked) => onPatch({ timeWindowNs: checked ? null : Math.max(20, (survey.lineLength / 150) * 1000) })}
-          />
-        </div>
-      </div>
-      <RangeField
-        label={t.noiseLevel}
-        value={survey.noisePercent}
-        onChange={(v) => onPatch({ noisePercent: v })}
-        min={0}
-        max={30}
-        step={0.5}
-        unit="%"
-        error={errorFor('survey.noisePercent')}
-        help={help('gpr.noise')}
+      <NumberField
+        label={t.lineLength}
+        value={survey.lineLength}
+        onChange={(v) => onPatch({ lineLength: v })}
+        unit="m"
+        error={errorFor('survey.lineLength')}
       />
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="space-y-3.5">
+          <NumberField
+            label={t.seed}
+            value={survey.seed}
+            onChange={(v) => onPatch({ seed: Math.round(v) })}
+            error={errorFor('survey.seed')}
+          />
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <NumberField
+                label={t.timeWindow}
+                value={survey.timeWindowNs ?? NaN}
+                onChange={(v) => onPatch({ timeWindowNs: Number.isNaN(v) ? 2 : v })}
+                unit="ns"
+                disabled={autoWindow}
+                error={autoWindow ? undefined : errorFor('survey.timeWindowNs')}
+              />
+            </div>
+            <div className="pb-5">
+              <Toggle
+                label={t.timeWindowAuto}
+                checked={autoWindow}
+                onChange={(checked) => onPatch({ timeWindowNs: checked ? null : Math.max(20, (survey.lineLength / 150) * 1000) })}
+              />
+            </div>
+          </div>
+          <RangeField
+            label={t.noiseLevel}
+            value={survey.noisePercent}
+            onChange={(v) => onPatch({ noisePercent: v })}
+            min={0}
+            max={30}
+            step={0.5}
+            unit="%"
+            error={errorFor('survey.noisePercent')}
+            help={help('gpr.noise')}
+          />
+        </div>
+      </AdvancedSection>
     </div>
   )
 }
@@ -221,7 +224,7 @@ export function LayerEditor({ layers, onChange, onAdd, onRemove, errorFor }: Lay
                 type="button"
                 onClick={() => onRemove(layer.id)}
                 disabled={isHalf || layers.length <= 2}
-                className="mt-1.5 rounded-md px-1 py-1 text-gs-mist transition-colors hover:bg-gs-danger/10 hover:text-gs-danger disabled:cursor-not-allowed disabled:opacity-30"
+                className="mt-1.5 inline-flex h-11 w-11 items-center justify-center rounded-md text-gs-mist transition-colors hover:bg-gs-danger/10 hover:text-gs-danger disabled:cursor-not-allowed disabled:opacity-30"
                 aria-label={`${t.removeLayer} L${i + 1}`}
                 title={t.removeLayer}
               >
@@ -330,7 +333,7 @@ export function TargetEditor({ targets, onChange, onAdd, onRemove, errorFor }: T
               error={errorFor(`target.${i}.sigma`)}
             />
             <div className="flex items-end pb-4">
-              <span className="text-xs leading-tight text-gs-mist/80">{t.isMetal}: εr = 1e6</span>
+              <span className="text-xs leading-tight text-gs-mist">{t.isMetal}: εr = 1e6</span>
             </div>
           </div>
         </div>
@@ -446,7 +449,7 @@ export function PicksPanel({ result }: { result: GprResult | null }) {
           <tbody className="gs-number">
             {result.interfaces.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-3 text-center text-gs-mist/70">
+                <td colSpan={5} className="px-3 py-3 text-center text-gs-mist">
                   —
                 </td>
               </tr>
@@ -493,7 +496,7 @@ export function PicksPanel({ result }: { result: GprResult | null }) {
           </table>
         </div>
       )}
-      <p className="text-xs leading-relaxed text-gs-mist/85">{t.depthConversion}</p>
+      <p className="text-xs leading-relaxed text-gs-mist">{t.depthConversion}</p>
     </div>
   )
 }

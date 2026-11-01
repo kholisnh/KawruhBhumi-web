@@ -49,8 +49,8 @@ export const figureMeta: Record<FigureId, FigureMeta> = {
   'gpr-peat': {
     title: L('Peat thickness from a radargram', 'Ketebalan gambut dari radargram'),
     caption: L(
-      'A strong reflection marks the peat–mineral-soil boundary. Boreholes calibrate the radar velocity, turning two-way time into thickness. Redrawn after Rais et al. (2026), CC BY-compatible journal terms.',
-      'Refleksi kuat menandai batas gambut–tanah mineral. Lubang bor mengkalibrasi kecepatan radar sehingga waktu dua arah menjadi ketebalan. Digambar ulang setelah Rais dkk. (2026).',
+      'A strong reflection marks the peat–mineral-soil boundary. Boreholes calibrate the radar velocity, turning two-way time into thickness. Original schematic summarising the survey described by Rais et al. (2026).',
+      'Refleksi kuat menandai batas gambut–tanah mineral. Lubang bor mengkalibrasi kecepatan radar sehingga waktu dua arah menjadi ketebalan. Skema asli yang merangkum survei Rais dkk. (2026).',
     ),
   },
   'mag-acquisition': {
@@ -63,8 +63,8 @@ export const figureMeta: Record<FigureId, FigureMeta> = {
   'mag-profile': {
     title: L('Magnetic anomaly over a shallow body', 'Anomali magnetik di atas tubuh dangkal'),
     caption: L(
-      'A dipolar anomaly is symmetric about the body in a vertical-field setting; its width and amplitude constrain depth and magnetization. Schematic after the survey geometry of Safitri et al. (2026).',
-      'Anomali dipol simetris terhadap tubuh pada medan vertikal; lebarnya dan amplitudonya membatasi kedalaman dan magnetisasi. Skema mengikuti geometri survei Safitri dkk. (2026).',
+      'A dipolar anomaly is symmetric about the body in a vertical-field setting; its width and amplitude constrain depth and magnetization. Original schematic summarising the survey geometry of Safitri et al. (2026).',
+      'Anomali dipol simetris terhadap tubuh pada medan vertikal; lebarnya dan amplitudonya membatasi kedalaman dan magnetisasi. Skema asli yang merangkum geometri survei Safitri dkk. (2026).',
     ),
   },
   'gravity-acquisition': {
@@ -91,15 +91,15 @@ export const figureMeta: Record<FigureId, FigureMeta> = {
   'reflection-fold': {
     title: L('Anticline and syncline in a seismic section', 'Antiklin dan sinklin pada penampang seismik'),
     caption: L(
-      'Reflections dip away from an anticline crest and toward a syncline trough. In a time section, the apparent geometry also depends on velocity. Original schematic.',
-      'Refleksi miring menjauhi puncak antiklin dan menuju palung sinklin. Pada penampang waktu, geometri semu juga bergantung pada kecepatan. Skema asli.',
+      'Reflections dip away from an anticline crest and toward a syncline trough. In a time section, the apparent geometry also depends on velocity. Original schematic; the 1D workspace does not model fold geometry.',
+      'Refleksi miring menjauhi puncak antiklin dan menuju palung sinklin. Pada penampang waktu, geometri semu juga bergantung pada kecepatan. Skema asli; workspace 1D tidak memodelkan geometri lipatan.',
     ),
   },
   'reflection-tarakan': {
     title: L('Rollover fold above mobile shale', 'Lipatan rollover di atas serpih mobil'),
     caption: L(
-      'Listric normal faults detach on mobile shale; hanging-wall rollover and crestal grabens form above the detachment. Simplified after Erdi et al. (2023), CC BY-NC 4.0.',
-      'Sesar normal listrik terlepas pada serpih mobil; rollover hanging-wall dan graben krestal terbentuk di atas detachment. Disederhanakan setelah Erdi dkk. (2023), CC BY-NC 4.0.',
+      'Listric normal faults detach on mobile shale; hanging-wall rollover and crestal grabens form above the detachment. Original schematic summarising the geometry described by Erdi et al. (2023).',
+      'Sesar normal listrik terlepas pada serpih mobil; rollover hanging-wall dan graben krestal terbentuk di atas detachment. Skema asli yang merangkum geometri yang dijelaskan Erdi dkk. (2023).',
     ),
   },
   'refraction-acquisition': {
@@ -112,8 +112,8 @@ export const figureMeta: Record<FigureId, FigureMeta> = {
   'refraction-airport': {
     title: L('Airport site investigation', 'Investigasi situs bandara'),
     caption: L(
-      'Refraction tomography and MASW resolve shallow low-modulus layers and the groundwater table beneath a taxiway. Schematic after Diniyarti et al. (2026), CC BY-SA 4.0.',
-      'Tomografi refraksi dan MASW meresolusi lapisan dangkal bermodulus rendah dan muka air tanah di bawah taxiway. Skema setelah Diniyarti dkk. (2026), CC BY-SA 4.0.',
+      'Refraction tomography and MASW resolve shallow low-modulus layers and the groundwater table beneath a taxiway. Original schematic summarising the survey described by Diniyarti et al. (2026).',
+      'Tomografi refraksi dan MASW meresolusi lapisan dangkal bermodulus rendah dan muka air tanah di bawah taxiway. Skema asli yang merangkum survei Diniyarti dkk. (2026).',
     ),
   },
   'resistivity-acquisition': {

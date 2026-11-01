@@ -23,16 +23,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Android build - tidak diperlukan untuk Vercel
-/android/
 /GeoSimLab-debug.apk
-
-# Versi HTML mandiri dan materi branding terpisah
-/Single file local html/
-/LOGO NAME BRANDING/
-
-# Dokumen internal yang tidak diperlukan untuk deployment
 /LAPORAN.md
+/LOGO NAME BRANDING/
 /NEW_BRIEF.txt
 /NEW_BRIEF_24 OKT.txt
+/PROMO_THREAD_BRIEF.txt
+/ROADMAP_R0_R6.txt
+/Single file local html/
+/android/

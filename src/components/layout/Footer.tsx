@@ -10,35 +10,35 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo />
-          <p className="mt-2 text-xs tracking-[0.18em] text-gs-mist/75">{tr(site.brand.tagline, lang)}</p>
+          <p className="mt-2 text-xs tracking-[0.18em] text-gs-mist">{tr(site.brand.tagline, lang)}</p>
           <p className="mt-4 max-w-xs text-xs leading-relaxed text-gs-mist">{d.footer.aboutBody}</p>
-          <p className="mt-3 max-w-xs text-xs leading-relaxed text-gs-mist/60">{tr(site.disclaimer.devShort, lang)}</p>
+          <p className="mt-3 max-w-xs text-xs leading-relaxed text-gs-mist">{tr(site.disclaimer.devShort, lang)}</p>
         </div>
         <div>
           <h3 className="gs-label mb-3">{tr(site.footer.docs, lang)}</h3>
           <ul className="space-y-2">
             <li>
-              <Link to="/metode" className="text-xs text-gs-mist transition-colors hover:text-gs-cyan">
+              <Link to="/metode" className="inline-flex min-h-11 items-center text-xs text-gs-mist transition-colors hover:text-gs-cyan">
                 {tr(site.nav.methods, lang)}
               </Link>
             </li>
             <li>
-              <Link to="/teori" className="text-xs text-gs-mist transition-colors hover:text-gs-cyan">
+              <Link to="/teori" className="inline-flex min-h-11 items-center text-xs text-gs-mist transition-colors hover:text-gs-cyan">
                 {tr(site.nav.theory, lang)}
               </Link>
             </li>
             <li>
-              <Link to="/simulator" className="text-xs text-gs-mist transition-colors hover:text-gs-cyan">
+              <Link to="/simulator" className="inline-flex min-h-11 items-center text-xs text-gs-mist transition-colors hover:text-gs-cyan">
                 {tr(site.nav.simulator, lang)}
               </Link>
             </li>
             <li>
-              <Link to="/resources" className="text-xs text-gs-mist transition-colors hover:text-gs-cyan">
+              <Link to="/resources" className="inline-flex min-h-11 items-center text-xs text-gs-mist transition-colors hover:text-gs-cyan">
                 {tr(site.nav.resources, lang)}
               </Link>
             </li>
             <li>
-              <Link to="/about" className="text-xs text-gs-mist transition-colors hover:text-gs-cyan">
+              <Link to="/about" className="inline-flex min-h-11 items-center text-xs text-gs-mist transition-colors hover:text-gs-cyan">
                 {tr(site.nav.about, lang)}
               </Link>
             </li>
@@ -47,13 +47,13 @@ export function Footer() {
         <div>
           <h3 className="gs-label mb-3">{tr(site.footer.feedback, lang)}</h3>
           <p className="text-xs leading-relaxed text-gs-mist">{tr(site.disclaimer.feedbackBody, lang)}</p>
-          <a href={`mailto:${site.disclaimer.email}`} className="mt-2 inline-block text-xs font-semibold text-gs-cyan hover:text-gs-ice">
+          <a href={`mailto:${site.disclaimer.email}`} className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-gs-cyan hover:text-gs-ice">
             {site.disclaimer.email}
           </a>
         </div>
         <div>
           <h3 className="gs-label mb-3 text-gs-amber">
-            <Link to="/disclaimer" className="hover:text-gs-ice">
+            <Link to="/disclaimer" className="inline-flex min-h-11 items-center hover:text-gs-ice">
               {tr(site.footer.disclaimer, lang)}
             </Link>
           </h3>
@@ -61,7 +61,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-black/8 py-4">
-        <p className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 text-xs text-gs-mist/70 sm:px-6">
+        <p className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 text-xs text-gs-mist sm:px-6">
           <span>{d.footer.copyright}</span>
           <span>{tr(site.footer.built, lang)}</span>
         </p>

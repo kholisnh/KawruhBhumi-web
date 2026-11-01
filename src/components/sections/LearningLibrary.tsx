@@ -1,7 +1,6 @@
 import { useI18n } from '../../i18n'
 import { glossary, formulas } from '../../content/glossary'
-import { experimentsByMethod } from '../../content/experiments'
-import { METHODS } from '../../content/methods'
+import { buildAnswerKey, buildWorksheet } from '../../content/teacherPack'
 import { Button } from '../ui/Button'
 import { SectionHeading } from '../ui/SectionHeading'
 import { Equation } from '../ui/Equation'
@@ -18,45 +17,12 @@ function downloadText(filename: string, text: string) {
 
 export function LearningLibrary() {
   const { d, lang } = useI18n()
-  const id = lang === 'id'
-
   const worksheet = () => {
-    const lines = [
-      id ? '# Lembar Kerja Eksperimen Terpandu — KawruhBhumi Lab' : '# Guided Experiments Worksheet — KawruhBhumi Lab',
-      '',
-      id ? 'Nama / kelompok: ____________________  Tanggal: __________' : 'Name / group: ____________________  Date: __________',
-      '',
-    ]
-    METHODS.forEach((method) => {
-      const info = d.methods.list[method.id]
-      lines.push(`## ${info.name} (${info.abbr})`, '')
-      experimentsByMethod[method.id].forEach((experiment, index) => {
-        lines.push(`### ${index + 1}. ${experiment.title[lang]}`)
-        lines.push(`**${id ? 'Pertanyaan' : 'Question'}:** ${experiment.question[lang]}`, '')
-        experiment.steps.forEach((step, stepIndex) => lines.push(`${stepIndex + 1}. ${step[lang]}`))
-        lines.push('', `**${id ? 'Prediksi saya' : 'My prediction'}:** ________________________________`, '')
-      })
-    })
-    downloadText(`kawruhbhumi-worksheet-${lang}.md`, lines.join('\n'))
+    downloadText(`kawruhbhumi-worksheet-${lang}.md`, buildWorksheet(lang))
   }
 
   const answerKey = () => {
-    const lines = [
-      id ? '# Kunci Jawaban Eksperimen Terpandu — KawruhBhumi Lab' : '# Guided Experiments Answer Key — KawruhBhumi Lab',
-      '',
-      id ? 'Gunakan sebagai pembanding, bukan satu-satunya jawaban benar.' : 'Use as a comparison, not as the only correct answer.',
-      '',
-    ]
-    METHODS.forEach((method) => {
-      const info = d.methods.list[method.id]
-      lines.push(`## ${info.name} (${info.abbr})`, '')
-      experimentsByMethod[method.id].forEach((experiment, index) => {
-        lines.push(`### ${index + 1}. ${experiment.title[lang]}`)
-        lines.push(`**${id ? 'Pertanyaan' : 'Question'}:** ${experiment.question[lang]}`)
-        lines.push(`**${id ? 'Pengamatan yang diharapkan' : 'Expected observation'}:** ${experiment.observe[lang]}`, '')
-      })
-    })
-    downloadText(`kawruhbhumi-answer-key-${lang}.md`, lines.join('\n'))
+    downloadText(`kawruhbhumi-answer-key-${lang}.md`, buildAnswerKey(lang))
   }
 
   return (

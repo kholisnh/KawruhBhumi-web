@@ -1,4 +1,5 @@
 import { methodById, type MethodId } from '../content/methods'
+import { isScenarioId } from '../content/scenarioIds'
 
 const VERSION = 1
 
@@ -44,14 +45,18 @@ export function scenarioUrl(methodId: MethodId, scenarioId: string, input: unkno
   return `${window.location.origin}${window.location.pathname}#${route}?d=${token}`
 }
 
-export function readScenarioFromLocation(methodId: MethodId): { scenarioId: string; input: unknown } | null {
-  if (typeof window === 'undefined') return null
-  const hash = window.location.hash
+export function readScenarioFromLocation(
+  methodId: MethodId,
+  hash = typeof window === 'undefined' ? '' : window.location.hash,
+): { scenarioId: string; input?: unknown } | null {
   const q = hash.indexOf('?')
   if (q < 0) return null
   const params = new URLSearchParams(hash.slice(q + 1))
   const token = params.get('d')
-  return token ? decodeScenario(methodId, token) : null
+  const decoded = token ? decodeScenario(methodId, token) : null
+  if (decoded && isScenarioId(methodId, decoded.scenarioId)) return decoded
+  const scenario = params.get('scenario')
+  return scenario && isScenarioId(methodId, scenario) ? { scenarioId: scenario } : null
 }
 
 export async function copyText(text: string): Promise<boolean> {

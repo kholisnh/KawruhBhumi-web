@@ -16,7 +16,7 @@ export function Tabs<T extends string>({ tabs, active, onChange, className = '' 
           aria-selected={active === tab.id}
           disabled={tab.disabled}
           onClick={() => onChange(tab.id)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`min-h-11 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
             active === tab.id
               ? 'bg-gs-raised text-gs-ice shadow'
               : 'text-gs-mist hover:bg-black/4 hover:text-gs-ice disabled:cursor-not-allowed disabled:opacity-40'

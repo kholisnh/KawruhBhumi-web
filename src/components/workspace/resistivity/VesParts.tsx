@@ -10,6 +10,7 @@ import type { VesArrayType } from '../../../sim/resistivity/types'
 import { VES_LIMITS } from '../../../sim/resistivity/validation'
 import { Plot, type PlotlyModule } from '../../charts/Plot'
 import { baseLayout, chartColors } from '../../charts/plotTheme'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Button } from '../../ui/Button'
 import { Panel } from '../../ui/Card'
 import { NumberField } from '../../ui/NumberField'
@@ -65,18 +66,22 @@ export function VesSurveyPanel({
         <NumberField label={t.spacingMin} unit="m" value={survey.spacingMinM} onChange={(v) => patch({ spacingMinM: v })} error={errFor('survey.spacingMinM')} />
         <NumberField label={t.spacingMax} unit="m" value={survey.spacingMaxM} onChange={(v) => patch({ spacingMaxM: v })} error={errFor('survey.spacingMaxM')} help={help('ves.spacing')} />
         <NumberField label={t.spacingCount} value={survey.spacingCount} onChange={(v) => patch({ spacingCount: Math.round(v) })} step={1} error={errFor('survey.spacingCount')} />
-        <NumberField
-          label={t.mnHalf}
-          unit="m"
-          value={survey.mnHalfM}
-          onChange={(v) => patch({ mnHalfM: v })}
-          disabled={array === 'wenner'}
-          error={errFor('survey.mnHalfM')}
-        />
-        <NumberField label={t.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
-        <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-gs-mist/80">{array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberField
+            label={t.mnHalf}
+            unit="m"
+            value={survey.mnHalfM}
+            onChange={(v) => patch({ mnHalfM: v })}
+            disabled={array === 'wenner'}
+            error={errFor('survey.mnHalfM')}
+          />
+          <NumberField label={t.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
+          <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
+        </div>
+      </AdvancedSection>
+      <p className="mt-1 text-xs leading-relaxed text-gs-mist">{array === 'wenner' ? t.wennerNote : t.schlumbergerNote}</p>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -111,7 +116,7 @@ export function VesLayersPanel({
                 <span className="h-2.5 w-2.5 rounded-full border border-black/10" style={{ backgroundColor: rhoFill(layer.resistivityOhmM) }} aria-hidden />
                 <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > VES_LIMITS.minLayers && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-xs text-gs-danger transition-colors hover:underline">
                     {t.removeLayer}
                   </button>
                 )}
@@ -132,7 +137,7 @@ export function VesLayersPanel({
           )
         })}
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-gs-mist/80">{t.layersNote}</p>
+      <p className="mt-2 text-xs leading-relaxed text-gs-mist">{t.layersNote}</p>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )

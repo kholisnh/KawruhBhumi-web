@@ -63,7 +63,7 @@ export function NumberField({ label, value, onChange, unit, error, step, disable
             if (e.key === 'Enter') commit()
           }}
           step={step}
-          className={`gs-number w-full rounded-lg border bg-gs-deep/80 px-2.5 py-1.5 text-xs text-gs-ice transition-colors outline-none placeholder:text-gs-mist/50 ${
+          className={`gs-number min-h-11 w-full rounded-lg border bg-gs-deep/80 px-2.5 py-1.5 text-xs text-gs-ice transition-colors outline-none placeholder:text-gs-mist focus-visible:ring-2 focus-visible:ring-gs-cyan/60 ${
             error ? 'border-gs-danger/70 focus:border-gs-danger' : 'border-black/10 focus:border-gs-cyan/60'
           } disabled:opacity-50 ${unit ? 'pr-14' : ''}`}
         />

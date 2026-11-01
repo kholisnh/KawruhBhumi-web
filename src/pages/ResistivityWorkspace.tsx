@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { exportCsv, exportPlotPng } from '../components/charts/exporters'
 import { AssumptionPanel } from '../components/ui/AssumptionPanel'
 import { Button } from '../components/ui/Button'
@@ -6,12 +6,21 @@ import { Panel } from '../components/ui/Card'
 import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
-import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { StatusText, WorkspaceShell, useForwardState, usePersistedBoolean } from '../components/workspace/common'
 import { ShareButton } from '../components/ui/ShareButton'
 import { useSharedScenario } from '../lib/useSharedScenario'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
+import { ComparePanel } from '../components/workspace/r2/ComparePanel'
+import { PresetCards } from '../components/workspace/r2/PresetCards'
+import { PresetThumbnail } from '../components/workspace/r2/PresetThumbnail'
+import { SweepPanel } from '../components/workspace/r2/SweepPanel'
+import { ChallengePanel } from '../components/workspace/r3/ChallengePanel'
+import { useChallenge } from '../components/workspace/r3/useChallenge'
+import { cleanResistivityInput, perturbResistivityInput, resistivityChallengeCurve } from '../components/workspace/r3/targets'
+import type { CompareMetric, ComparePlotSpec, CompareSeries, ComparisonSnapshot, PresetDifficulty, SweepMetric, SweepParameter } from '../components/workspace/r2/types'
 import { VesCurvePlot, VesLayersPanel, VesModelSvg, VesSummaryPanel, VesSurveyPanel } from '../components/workspace/resistivity/VesParts'
 import { useI18n } from '../i18n'
+import { fmt } from '../sim/core/format'
 import {
   runVesForward,
   validateVes,
@@ -28,6 +37,14 @@ import {
 import type { VesArrayType } from '../sim/resistivity/types'
 import { VES_LIMITS } from '../sim/resistivity/validation'
 
+const resistivityDifficulty: Record<VesScenarioId, PresetDifficulty> = {
+  'two-layer-bedrock': 'easy',
+  'three-layer-clay': 'medium',
+  'three-layer-aquifer': 'medium',
+  'four-layer-saline': 'advanced',
+  'five-layer-layered': 'advanced',
+}
+
 export function ResistivityWorkspace() {
   const { d } = useI18n()
   const shared = useSharedScenario<VesInput>('resistivity')
@@ -43,9 +60,111 @@ export function ResistivityWorkspace() {
     run: (input) => runVesForward(input),
     clone: (input) => structuredClone(input),
   })
-  const [showGrid, setShowGrid] = useState(true)
-  const [showUnits, setShowUnits] = useState(true)
+  const [showGrid, setShowGrid] = usePersistedBoolean('kb.display.resistivity.grid', true)
+  const [showUnits, setShowUnits] = usePersistedBoolean('kb.display.resistivity.units', true)
   const curveEl = useRef<HTMLDivElement | null>(null)
+  const [pinned, setPinned] = useState<ComparisonSnapshot | null>(null)
+  const challengeInputKey = useMemo(() => JSON.stringify(s.input), [s.input])
+  const challenge = useChallenge<VesInput>({
+    input: s.input,
+    inputKey: challengeInputKey,
+    makeTarget: perturbResistivityInput,
+    computeCurve: (input) => resistivityChallengeCurve(runVesForward(cleanResistivityInput(input)), `${t.spacingAxis} (m)`, `${t.rhoAxis} (Ω·m)`),
+  })
+
+  const presetItems = useMemo(
+    () =>
+      vesScenarios.map((scenario) => {
+        const result = runVesForward(vesScenarioToInput(scenario.id))
+        const level = resistivityDifficulty[scenario.id] ?? 'medium'
+        return {
+          id: scenario.id,
+          label: (t.scenarios as Record<string, string>)[scenario.id] ?? scenario.id,
+          difficulty: d.wshared.r2.difficulty[level],
+          level,
+          expected: `${fmt(result.maxRhoOhmM, 0)} Ω·m max`,
+          thumbnail: <PresetThumbnail method="resistivity" />,
+        }
+      }),
+    [d, t],
+  )
+
+  const compareMetrics = useMemo<CompareMetric[]>(() => {
+    if (!s.result) return []
+    return [
+      { id: 'top', label: t.topRho, unit: 'Ω·m', value: s.result.topResistivityOhmM },
+      { id: 'bottom', label: t.bottomRho, unit: 'Ω·m', value: s.result.bottomResistivityOhmM },
+      { id: 'max', label: t.apparentRange, unit: 'Ω·m', value: s.result.maxRhoOhmM },
+      { id: 'depth', label: t.totalDepth, unit: 'm', value: s.result.totalDepthM },
+    ]
+  }, [s.result, t])
+
+  const compareSeries = useMemo<CompareSeries[]>(
+    () => (s.result ? [{ name: t.cleanCurve, x: s.result.spacingsM, y: s.result.cleanOhmM }] : []),
+    [s.result, t],
+  )
+
+  const comparePlot = useMemo<ComparePlotSpec>(
+    () => ({ xTitle: `${t.spacingAxis} (m)`, yTitle: `${t.rhoAxis} (Ω·m)`, xType: 'log', yType: 'log' }),
+    [t],
+  )
+
+  const pinResult = () => {
+    if (!s.result) return
+    setPinned({
+      scenarioLabel: (t.scenarios as Record<string, string>)[s.scenarioId] ?? s.scenarioId,
+      metrics: compareMetrics,
+      series: compareSeries,
+      plot: comparePlot,
+    })
+  }
+
+  const sweepParameters = useMemo<SweepParameter<VesInput>[]>(() => {
+    const first = s.input.layers[0]
+    if (!first) return []
+    const otherDepth = vesTotalDepth(s.input.layers) - (first.thicknessM ?? 0)
+    const maxThickness = Math.max(0.1, Math.min(200, 500 - otherDepth))
+    return [
+      {
+        id: 'rho',
+        label: t.topRho,
+        unit: 'Ω·m',
+        min: 0.1,
+        max: 100000,
+        get: (input) => input.layers[0]?.resistivityOhmM ?? 0,
+        apply: (input, value) => ({
+          ...input,
+          layers: input.layers.map((layer, index) => (index === 0 ? { ...layer, resistivityOhmM: value } : layer)),
+        }),
+      },
+      {
+        id: 'thickness',
+        label: t.thickness,
+        unit: 'm',
+        min: 0.1,
+        max: maxThickness,
+        get: (input) => input.layers[0]?.thicknessM ?? 0,
+        apply: (input, value) => ({
+          ...input,
+          layers: input.layers.map((layer, index) => (index === 0 ? { ...layer, thicknessM: value } : layer)),
+        }),
+      },
+    ]
+  }, [s.input.layers, t])
+
+  const sweepMetrics = useMemo<SweepMetric<VesResult>[]>(
+    () => [
+      { id: 'max', label: t.apparentRange, unit: 'Ω·m', get: (result) => result.maxRhoOhmM },
+      { id: 'depth', label: t.totalDepth, unit: 'm', get: (result) => result.totalDepthM },
+    ],
+    [t],
+  )
+
+  const prepareSweep = useCallback((input: VesInput) => {
+    const clone = structuredClone(input)
+    clone.survey.noisePercent = 0
+    return clone
+  }, [])
 
   const patchSurvey = (p: Partial<VesSurvey>) => s.setInput((prev) => ({ ...prev, survey: { ...prev.survey, ...p } }))
   const setArray = (array: VesArrayType) =>
@@ -137,6 +256,11 @@ export function ResistivityWorkspace() {
               options={s.scenarioIds.map((id) => ({ value: id, label: (t.scenarios as Record<string, string>)[id] ?? id }))}
               compact
             />
+            <PresetCards
+              items={presetItems}
+              activeId={s.scenarioId}
+              onSelect={(id) => s.loadScenario(id)}
+            />
           </Panel>
           <VesSurveyPanel survey={s.input.survey} array={s.input.array} errors={s.errors} errDict={t.errors} patch={patchSurvey} setArray={setArray} />
           <VesLayersPanel layers={s.input.layers} errors={s.errors} errDict={t.errors} patch={patchLayer} add={addLayer} remove={removeLayer} />
@@ -167,6 +291,39 @@ export function ResistivityWorkspace() {
             <VesModelSvg input={s.input} />
           </Panel>
           {s.result && <VesSummaryPanel result={s.result} input={s.input} />}
+          <ComparePanel
+            pinned={pinned}
+            currentMetrics={compareMetrics}
+            currentSeries={compareSeries}
+            plot={comparePlot}
+            currentScenarioLabel={(t.scenarios as Record<string, string>)[s.scenarioId] ?? s.scenarioId}
+            canPin={Boolean(s.result) && !s.dirty}
+            stale={s.dirty}
+            onPin={pinResult}
+            onClear={() => setPinned(null)}
+          />
+          <SweepPanel
+            input={s.input}
+            parameters={sweepParameters}
+            metrics={sweepMetrics}
+            run={(input) => runVesForward(input)}
+            prepare={prepareSweep}
+            disabled={s.errors.length > 0}
+          />
+
+          <ChallengePanel
+            target={challenge.target}
+            active={challenge.active}
+            stale={challenge.stale}
+            canStart={s.errors.length === 0}
+            canCheck={s.errors.length === 0}
+            onStart={challenge.start}
+            onCheck={challenge.check}
+            onReset={() => {
+              s.resetModel()
+              challenge.resetCheck()
+            }}
+          />
         </>
       }
       bottom={

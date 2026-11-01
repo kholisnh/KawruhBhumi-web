@@ -54,7 +54,7 @@ export function AboutPage() {
         </Panel>
         <Panel title={d.footer.communityTitle}>
           <p className="text-xs leading-relaxed text-gs-mist">{d.footer.communityBody}</p>
-          <a href={`mailto:${site.disclaimer.email}`} className="mt-2 inline-block text-xs font-semibold text-gs-cyan hover:text-gs-ice">
+          <a href={`mailto:${site.disclaimer.email}`} className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-gs-cyan hover:text-gs-ice">
             {site.disclaimer.email}
           </a>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ export function AboutPage() {
                     href={ref.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-medium text-gs-ice underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-cyan"
+                    className="inline-flex min-h-11 items-center font-medium text-gs-ice underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-cyan"
                   >
                     {ref.title}
                   </a>{' '}

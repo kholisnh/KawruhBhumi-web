@@ -11,7 +11,7 @@ export function ReportPanel() {
         <Button variant="secondary" size="sm" onClick={() => window.print()}>
           {d.wshared.printReport}
         </Button>
-        <span className="text-xs text-gs-mist/70">{d.wshared.printHint}</span>
+        <span className="no-print text-xs text-gs-mist">{d.wshared.printHint}</span>
       </div>
       <div className="mt-4 grid gap-2 text-xs leading-relaxed text-gs-mist sm:grid-cols-3">
         {d.wshared.reportQuestions.map((q, i) => (

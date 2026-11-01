@@ -16,11 +16,11 @@
   --color-gs-ice: #252525;
   --color-gs-mist: #5c6470;
   --color-gs-cyan: #3664f4;
-  --color-gs-teal: #1f7f99;
-  --color-gs-amber: #d04040;
+  --color-gs-teal: #19708a;
+  --color-gs-amber: #b23a3a;
   --color-gs-violet: #60cbff;
   --color-gs-blue: #252525;
-  --color-gs-danger: #c93232;
+  --color-gs-danger: #b82b2b;
 
   --font-sans: 'Cabin', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -124,8 +124,53 @@
   fill: var(--color-gs-mist) !important;
 }
 
+@media (pointer: coarse), (max-width: 640px) {
+  .js-plotly-plot .plotly .modebar {
+    display: none !important;
+  }
+}
+
 input[type='range'] {
   accent-color: var(--color-gs-primary);
+}
+
+.gs-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.05);
+}
+.gs-range::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border: 2px solid var(--color-gs-deep);
+  border-radius: 9999px;
+  background: var(--color-gs-primary);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.gs-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.05);
+}
+.gs-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-gs-deep);
+  border-radius: 9999px;
+  background: var(--color-gs-primary);
+}
+
+.gs-infotip::after {
+  position: absolute;
+  inset: -4px;
+  content: '';
+}
+@media (pointer: coarse) {
+  .gs-infotip::after {
+    inset: -14px;
+  }
 }
 
 @media print {
@@ -152,6 +197,22 @@ input[type='range'] {
   }
 }
 
+/* Plotly's toolbar buttons are 24px by default; keep the same visual density
+   while meeting the 44px touch/click target used across the app. */
+.modebar-btn {
+  display: inline-flex !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.modebar-btn svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+.modebar-group {
+  display: inline-flex !important;
+}
 
 .gs-plot:fullscreen {
   background: #ffffff;

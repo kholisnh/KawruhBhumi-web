@@ -19,7 +19,7 @@ export function Navbar() {
   ]
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `rounded-lg px-2.5 py-2 text-[12.5px] font-medium transition-colors ${
+    `inline-flex min-h-11 items-center rounded-lg px-2.5 py-2 text-[12.5px] font-medium transition-colors ${
       isActive ? 'bg-gs-deep text-gs-ice' : 'text-gs-mist hover:bg-black/4 hover:text-gs-ice'
     }`
 
@@ -44,7 +44,7 @@ export function Navbar() {
                 type="button"
                 onClick={() => setLang(code)}
                 aria-pressed={lang === code}
-                className={`gs-number rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors ${
+                className={`gs-number min-h-11 min-w-11 rounded-md px-2 py-1 text-xs font-semibold uppercase transition-colors ${
                   lang === code ? 'bg-gs-raised text-gs-ice' : 'text-gs-mist hover:text-gs-ice'
                 }`}
               >
@@ -59,7 +59,7 @@ export function Navbar() {
           </Link>
           <button
             type="button"
-            className="rounded-lg border border-black/10 p-2 text-gs-mist hover:text-gs-ice lg:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-black/10 text-gs-mist hover:text-gs-ice lg:hidden"
             aria-expanded={open}
             aria-label="Menu"
             onClick={() => setOpen((v) => !v)}
@@ -103,7 +103,7 @@ export function Navbar() {
                   type="button"
                   onClick={() => setLang(code)}
                   aria-pressed={lang === code}
-                  className={`gs-number rounded-md border px-2 py-1 text-xs font-semibold uppercase ${
+                  className={`gs-number inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border px-2 py-1 text-xs font-semibold uppercase ${
                     lang === code ? 'border-gs-cyan/60 text-gs-cyan' : 'border-black/10 text-gs-mist'
                   }`}
                 >

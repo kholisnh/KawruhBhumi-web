@@ -6,17 +6,33 @@ import { Panel } from '../components/ui/Card'
 import { EmptyState } from '../components/ui/EmptyState'
 import { SelectField } from '../components/ui/SelectField'
 import { Toggle } from '../components/ui/Toggle'
-import { StatusText, WorkspaceShell, useForwardState } from '../components/workspace/common'
+import { StatusText, WorkspaceShell, useForwardState, usePersistedBoolean } from '../components/workspace/common'
 import { ShareButton } from '../components/ui/ShareButton'
 import { useSharedScenario } from '../lib/useSharedScenario'
 import { GrvBodiesPanel, GrvMapPanel, GrvModelPanel, GrvProfilePanel, GrvSurveyPanel, GrvSummaryPanel } from '../components/workspace/gravity/GrvParts'
 import { WorkspacePipeline } from '../components/workspace/gpr/GprPanels'
+import { ComparePanel } from '../components/workspace/r2/ComparePanel'
+import { PresetCards } from '../components/workspace/r2/PresetCards'
+import { PresetThumbnail } from '../components/workspace/r2/PresetThumbnail'
+import { SweepPanel } from '../components/workspace/r2/SweepPanel'
+import { ChallengePanel } from '../components/workspace/r3/ChallengePanel'
+import { useChallenge } from '../components/workspace/r3/useChallenge'
+import { cleanGravityInput, gravityChallengeCurve, perturbGravityInput } from '../components/workspace/r3/targets'
+import type { CompareMetric, ComparePlotSpec, CompareSeries, ComparisonSnapshot, PresetDifficulty, SweepMetric, SweepParameter } from '../components/workspace/r2/types'
 import { useI18n } from '../i18n'
 import { fmt } from '../sim/core/format'
 import { grvScenarios, grvScenarioToInput, grvUid, type GrvScenarioId } from '../sim/gravity/model'
 import { runGravityForward } from '../sim/gravity/solver'
 import type { GrvBody, GrvInput, GrvResult, GrvSurvey } from '../sim/gravity/types'
 import { validateGravity } from '../sim/gravity/validate'
+
+const gravityDifficulty: Record<GrvScenarioId, PresetDifficulty> = {
+  saltDome: 'medium',
+  tunnel: 'easy',
+  oreBody: 'medium',
+  shallowCavity: 'advanced',
+  basaltRidge: 'advanced',
+}
 
 function displayDepth(input: GrvInput): number {
   let depth = 5
@@ -42,10 +58,18 @@ export function GravityWorkspace() {
     run: runGravityForward,
     clone: (i) => structuredClone(i),
   })
-  const [showGrid, setShowGrid] = useState(true)
-  const [showUnits, setShowUnits] = useState(true)
-  const [showBodies, setShowBodies] = useState(true)
-  const [showStations, setShowStations] = useState(true)
+  const [showGrid, setShowGrid] = usePersistedBoolean('kb.display.gravity.grid', true)
+  const [showUnits, setShowUnits] = usePersistedBoolean('kb.display.gravity.units', true)
+  const [showBodies, setShowBodies] = usePersistedBoolean('kb.display.gravity.bodies', true)
+  const [showStations, setShowStations] = usePersistedBoolean('kb.display.gravity.stations', true)
+  const [pinned, setPinned] = useState<ComparisonSnapshot | null>(null)
+  const challengeInputKey = useMemo(() => JSON.stringify(s.input), [s.input])
+  const challenge = useChallenge<GrvInput>({
+    input: s.input,
+    inputKey: challengeInputKey,
+    makeTarget: perturbGravityInput,
+    computeCurve: (input) => gravityChallengeCurve(runGravityForward(cleanGravityInput(input)), `${d.wshared.distance} (m)`, `${t.profileTitle} (mGal)`),
+  })
   const profileEl = useRef<HTMLDivElement | null>(null)
   const mapEl = useRef<HTMLDivElement | null>(null)
 
@@ -74,6 +98,108 @@ export function GravityWorkspace() {
   const removeBody = (id: string) => s.setInput((prev) => ({ ...prev, bodies: prev.bodies.filter((b) => b.id !== id) }))
 
   const dispDepth = useMemo(() => displayDepth(s.input), [s.input])
+
+  const presetItems = useMemo(
+    () =>
+      grvScenarios.map((scenario) => {
+        const result = runGravityForward(grvScenarioToInput(scenario))
+        const level = gravityDifficulty[scenario.id]
+        return {
+          id: scenario.id,
+          label: t.scenarios[scenario.id],
+          difficulty: d.wshared.r2.difficulty[level],
+          level,
+          expected: `${fmt(result.diagnostics.maxAbsMGal, 2)} mGal`,
+          thumbnail: <PresetThumbnail method="gravity" />,
+        }
+      }),
+    [d, t],
+  )
+
+  const compareMetrics = useMemo<CompareMetric[]>(() => {
+    if (!s.result) return []
+    return [
+      { id: 'peak', label: t.peak, unit: 'mGal', value: s.result.diagnostics.maxAbsMGal },
+      { id: 'rms', label: d.wshared.r2.rms, unit: 'mGal', value: s.result.diagnostics.rmsMGal },
+      { id: 'ptp', label: t.peakToPeak, unit: 'mGal', value: s.result.diagnostics.peakToPeakMGal },
+      { id: 'stations', label: d.wshared.stations, value: s.result.diagnostics.nStations, format: (value) => String(Math.round(value)) },
+    ]
+  }, [d, s.result, t])
+
+  const compareSeries = useMemo<CompareSeries[]>(
+    () => (s.result ? [{ name: t.profileTitle, x: s.result.x, y: s.result.gMGal }] : []),
+    [s.result, t],
+  )
+
+  const comparePlot = useMemo<ComparePlotSpec>(
+    () => ({ xTitle: `${d.wshared.distance} (m)`, yTitle: `${t.profileTitle} (mGal)` }),
+    [d, t],
+  )
+
+  const pinResult = () => {
+    if (!s.result) return
+    setPinned({
+      scenarioLabel: t.scenarios[s.scenarioId],
+      metrics: compareMetrics,
+      series: compareSeries,
+      plot: comparePlot,
+    })
+  }
+
+  const sweepParameters = useMemo<SweepParameter<GrvInput>[]>(() => {
+    const first = s.input.bodies[0]
+    if (!first) return []
+    const depthMax = first.kind === 'prism' ? Math.max(2, first.z2 - 1) : 200
+    return [
+      {
+        id: 'density',
+        label: t.deltaRho,
+        unit: 'kg/m³',
+        min: -5000,
+        max: 5000,
+        get: (input) => input.bodies[0]?.deltaRho ?? 0,
+        apply: (input, value) => ({
+          ...input,
+          bodies: input.bodies.map((body, index) => (index === 0 ? ({ ...body, deltaRho: value } as GrvBody) : body)),
+        }),
+      },
+      {
+        id: 'depth',
+        label: first.kind === 'sphere' ? t.depthZ : t.z1,
+        unit: 'm',
+        min: 1,
+        max: depthMax,
+        get: (input) => {
+          const body = input.bodies[0]
+          return body ? (body.kind === 'sphere' ? body.z : body.z1) : 0
+        },
+        apply: (input, value) => ({
+          ...input,
+          bodies: input.bodies.map((body, index) =>
+            index === 0
+              ? body.kind === 'sphere'
+                ? ({ ...body, z: value } as GrvBody)
+                : ({ ...body, z1: value } as GrvBody)
+              : body,
+          ),
+        }),
+      },
+    ]
+  }, [s.input.bodies, t])
+
+  const sweepMetrics = useMemo<SweepMetric<GrvResult>[]>(
+    () => [
+      { id: 'peak', label: t.peak, unit: 'mGal', get: (result) => result.diagnostics.maxAbsMGal },
+      { id: 'rms', label: d.wshared.r2.rms, unit: 'mGal', get: (result) => result.diagnostics.rmsMGal },
+    ],
+    [d, t],
+  )
+
+  const prepareSweep = useCallback((input: GrvInput) => {
+    const clone = structuredClone(input)
+    clone.survey.noiseMGal = 0
+    return clone
+  }, [])
 
   const handleExportCsv = () => {
     if (!s.result) return
@@ -141,6 +267,7 @@ export function GravityWorkspace() {
               options={s.scenarioIds.map((id) => ({ value: id, label: t.scenarios[id] }))}
               compact
             />
+            <PresetCards items={presetItems} activeId={s.scenarioId} onSelect={(id) => s.loadScenario(id as GrvScenarioId)} />
           </Panel>
           <GrvSurveyPanel survey={s.input.survey} errors={s.errors} errDict={t.errors} patch={patchSurvey} />
           <GrvBodiesPanel bodies={s.input.bodies} errors={s.errors} errDict={t.errors} patch={patchBody} setKind={setKind} remove={removeBody} add={addBody} />
@@ -207,6 +334,39 @@ export function GravityWorkspace() {
           </Panel>
           <GrvModelPanel input={s.input} dispDepth={dispDepth} />
           {s.result && <GrvSummaryPanel result={s.result} errDict={{ ...t.warnings, ...t.errors }} showUnits={showUnits} />}
+          <ComparePanel
+            pinned={pinned}
+            currentMetrics={compareMetrics}
+            currentSeries={compareSeries}
+            plot={comparePlot}
+            currentScenarioLabel={t.scenarios[s.scenarioId]}
+            canPin={Boolean(s.result) && !s.dirty}
+            stale={s.dirty}
+            onPin={pinResult}
+            onClear={() => setPinned(null)}
+          />
+          <SweepPanel
+            input={s.input}
+            parameters={sweepParameters}
+            metrics={sweepMetrics}
+            run={runGravityForward}
+            prepare={prepareSweep}
+            disabled={s.errors.length > 0}
+          />
+
+          <ChallengePanel
+            target={challenge.target}
+            active={challenge.active}
+            stale={challenge.stale}
+            canStart={s.errors.length === 0}
+            canCheck={s.errors.length === 0}
+            onStart={challenge.start}
+            onCheck={challenge.check}
+            onReset={() => {
+              s.resetModel()
+              challenge.resetCheck()
+            }}
+          />
         </>
       }
       bottom={

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import type { EmLayer, GprTarget } from '../../sim/gpr/types'
 import { PEC_EPS_R } from '../../sim/gpr/solver'
 import { chartColors } from '../charts/plotTheme'
@@ -11,16 +11,22 @@ interface GeoCrossSectionProps {
   accent?: string
   showGrid?: boolean
   showUnits?: boolean
-  height?: number
   labels: { surface: string; transmitter: string; depth: string; distance: string }
   className?: string
 }
 
-const VIEW_W = 1000
-const VIEW_H = 420
-const MARGIN = { left: 56, top: 40, right: 16, bottom: 38 }
-const PLOT_W = VIEW_W - MARGIN.left - MARGIN.right
-const PLOT_H = VIEW_H - MARGIN.top - MARGIN.bottom
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches,
+  )
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 640px)')
+    const onChange = () => setNarrow(media.matches)
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
+  return narrow
+}
 
 /** Interpolated soil colour from εr (log scale 1 → 81, dark to teal). */
 const EPS_STOPS: Array<[number, string]> = [
@@ -79,22 +85,26 @@ export function GeoCrossSection({
   displayDepth,
   showGrid = true,
   showUnits = true,
-  height = 320,
   labels,
   className = '',
 }: GeoCrossSectionProps) {
-  const { tops, xScale, yScale } = useMemo(() => {
-    const t: number[] = [0]
-    for (let i = 0; i < layers.length - 1; i++) t.push(t[i] + Math.max(layers[i].thickness, 0))
-    return {
-      tops: t,
-      xScale: (m: number) => MARGIN.left + (m / Math.max(lineLength, 1e-9)) * PLOT_W,
-      yScale: (z: number) => MARGIN.top + (z / Math.max(displayDepth, 1e-9)) * PLOT_H,
-    }
-  }, [layers, lineLength, displayDepth])
+  const narrow = useNarrowViewport()
+  const VIEW_W = narrow ? 420 : 1000
+  const VIEW_H = narrow ? 360 : 420
+  const MARGIN = narrow
+    ? { left: 44, top: 34, right: 10, bottom: 34 }
+    : { left: 56, top: 40, right: 16, bottom: 38 }
+  const PLOT_W = VIEW_W - MARGIN.left - MARGIN.right
+  const PLOT_H = VIEW_H - MARGIN.top - MARGIN.bottom
+  const FONT_SIZE = narrow ? 14 : 12
 
-  const xStep = niceStep(lineLength, 7)
-  const yStep = niceStep(displayDepth, 5)
+  const tops: number[] = [0]
+  for (let i = 0; i < layers.length - 1; i++) tops.push(tops[i] + Math.max(layers[i].thickness, 0))
+  const xScale = (m: number) => MARGIN.left + (m / Math.max(lineLength, 1e-9)) * PLOT_W
+  const yScale = (z: number) => MARGIN.top + (z / Math.max(displayDepth, 1e-9)) * PLOT_H
+
+  const xStep = niceStep(lineLength, narrow ? 4 : 7)
+  const yStep = niceStep(displayDepth, narrow ? 4 : 5)
   const xTicks: number[] = []
   for (let v = 0; v <= lineLength + 1e-9; v += xStep) xTicks.push(v)
   const yTicks: number[] = []
@@ -102,13 +112,14 @@ export function GeoCrossSection({
 
   const antennaX = MARGIN.left + 0.08 * PLOT_W
   const surfaceY = MARGIN.top
+  const crossSectionLabel = `${labels.surface}; ${labels.distance} 0–${lineLength} m; ${labels.depth} 0–${displayDepth} m; εr ${layers.map((layer) => layer.epsR).join(', ')}; ${targets.length} targets`
 
   return (
     <svg
       viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-      style={{ width: '100%', height, display: 'block' }}
+      style={{ width: '100%', height: 'auto', aspectRatio: `${VIEW_W} / ${VIEW_H}`, display: 'block' }}
       role="img"
-      aria-label="Geological cross-section"
+      aria-label={crossSectionLabel}
       className={className}
     >
       <rect x={MARGIN.left} y={MARGIN.top} width={PLOT_W} height={PLOT_H} fill={chartColors.deep} rx={6} />
@@ -138,10 +149,10 @@ export function GeoCrossSection({
             )}
             {hPx > 26 && (
               <>
-                <text x={MARGIN.left + 8} y={y + 15} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.ice} opacity={0.92}>
+                <text x={MARGIN.left + 8} y={y + 15} fontSize={FONT_SIZE} fontFamily="JetBrains Mono, monospace" fill={chartColors.ice} opacity={0.92}>
                   L{i + 1} · εr {layer.epsR.toFixed(layer.epsR >= 100 ? 0 : 1)} · σ {layer.sigma} mS/m
                 </text>
-                <text x={MARGIN.left + 8} y={y + 30} fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} opacity={0.85}>
+                <text x={MARGIN.left + 8} y={y + 30} fontSize={FONT_SIZE} fontFamily="JetBrains Mono, monospace" fill={chartColors.mist} opacity={0.85}>
                   h = {thicknessLabel}
                 </text>
               </>
@@ -166,7 +177,7 @@ export function GeoCrossSection({
             <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={isMetal ? 'rgba(37,37,37,0.25)' : 'rgba(232,83,83,0.15)'} stroke={stroke} strokeWidth={1.6} />
             <line x1={cx - rx - 4} x2={cx + rx + 4} y1={cy} y2={cy} stroke={stroke} strokeOpacity={0.6} strokeWidth={0.8} />
             <line x1={cx} x2={cx} y1={cy - ry - 4} y2={cy + ry + 4} stroke={stroke} strokeOpacity={0.6} strokeWidth={0.8} />
-            <text x={cx} y={cy - ry - 7} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={stroke}>
+            <text x={cx} y={cy - ry - 7} textAnchor="middle" fontSize={FONT_SIZE} fontFamily="JetBrains Mono, monospace" fill={stroke}>
               T{i + 1}
             </text>
           </g>
@@ -223,13 +234,13 @@ export function GeoCrossSection({
             strokeWidth={1.2}
           />
         ))}
-        <text x={0} y={-26} textAnchor="middle" fontSize={12} fontFamily="JetBrains Mono, monospace" fill={chartColors.cyan}>
+        <text x={0} y={-26} textAnchor="middle" fontSize={FONT_SIZE} fontFamily="JetBrains Mono, monospace" fill={chartColors.cyan}>
           {labels.transmitter}
         </text>
       </g>
 
       {/* axes */}
-      <g fontFamily="JetBrains Mono, monospace" fontSize={12} fill={chartColors.mist}>
+      <g fontFamily="JetBrains Mono, monospace" fontSize={FONT_SIZE} fill={chartColors.mist}>
         {xTicks.map((v) => (
           <text key={`xt-${v}`} x={xScale(v)} y={VIEW_H - MARGIN.bottom + 16} textAnchor="middle">
             {Number(v.toFixed(2))}
@@ -242,10 +253,10 @@ export function GeoCrossSection({
         ))}
         {showUnits && (
           <>
-            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={12}>
+            <text x={MARGIN.left + PLOT_W / 2} y={VIEW_H - 4} textAnchor="middle" fill={chartColors.mist} fontSize={FONT_SIZE}>
               {labels.distance} [m]
             </text>
-            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={12} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
+            <text x={12} y={MARGIN.top + PLOT_H / 2} textAnchor="middle" fill={chartColors.mist} fontSize={FONT_SIZE} transform={`rotate(-90 12 ${MARGIN.top + PLOT_H / 2})`}>
               {labels.depth} [m]
             </text>
           </>

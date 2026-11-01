@@ -43,7 +43,7 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 
 | Route | Purpose |
 | --- | --- |
-| `#/` | Compact landing page: hero, 60-second demo, three entry paths, seven methods, disclaimer link |
+| `#/` | Compact landing page: hero, live 60-second HVSR demo, three entry paths, seven methods, disclaimer link |
 | `#/metode` | Method directory (seven profiles, chapter counts, workspace links) |
 | `#/metode/:methodId` | Method story, measured property, typical uses, chapter list |
 | `#/teori` | Theory library index: five chapters per method (35 chapters total) |
@@ -63,6 +63,9 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 
 ## Features
 
+- **Classroom tools on every method** — visual preset cards with difficulty and
+  expected results, pin-A/B comparison with delta stats, and guarded one-factor
+  sensitivity sweeps on all six non-HVSR workspaces.
 - **Chaptered theory** — every method has five short chapters: what we measure,
   the physics, the forward model, a worked example, and the honest limits. All
   equations render with KaTeX; content is bilingual and lives in
@@ -80,7 +83,9 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 - **Seismic reflection** — 1D impedance reflectivity, convolutional Ricker
   trace, offset gather with NMO, variable-area wiggle display, interface picks
   with cumulative transmission, λ/4 resolution diagnostics and a
-  velocity-coloured section.
+  velocity-coloured section. The solver is flat-layer only; anticline/syncline
+  geometry is covered by the field cases and schematic, not by the synthetic
+  section.
 - **Seismic refraction** — analytic direct and head-wave branches, crossover
   distances, critical angles, first-arrival envelope, ray paths, the classic
   two-layer intercept-time depth estimate, and a synthetic shot record with
@@ -90,20 +95,44 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
   resistivity curve, layered model/electrode SVG, layer table, and equivalence
   notes. The Hankel transform is integrated numerically with Gauss–Legendre
   quadrature.
-- **HVSR / microtremor** — 1D layered SH-transfer proxy for the H/V curve,
-  fundamental-frequency diagnostics, quarter-wave estimate, higher-mode
-  warning, and a produce-and-invert workflow using a transparent neighbourhood
-  search. The inversion is labelled as bounded and non-unique. Preset scenario
-  cards, A/B comparison with a pinned snapshot, a one-factor sensitivity sweep,
-  and a guess-the-model challenge turn the workspace into a classroom exercise.
+- **HVSR / microtremor** — a deliberately labelled 1D layered SH-transfer proxy
+  for the H/V curve, fundamental-frequency diagnostics, quarter-wave estimate,
+  higher-mode warning, and a produce-and-invert workflow using a transparent
+  neighbourhood search. The inversion is labelled as bounded and non-unique;
+  full Rayleigh ellipticity remains out of scope. Preset scenario cards, A/B
+  comparison with a pinned snapshot, a one-factor sensitivity sweep, and a
+  guess-the-model challenge turn the workspace into a classroom exercise.
+- **Live homepage demo** — a 60-second HVSR animation that thickens a peat layer
+  and updates the fundamental peak, with pause/restart and a reduced-motion
+  fallback.
 - **Scenario tools** — permalink sharing for every workspace, auto-run defaults,
-  last-scenario memory, a persistent method switcher, a printable practice
-  report, and labelled “What am I seeing?” prompts beside the results.
+  last-scenario memory, persisted display toggles, a persistent method switcher,
+  a printable practice report, and labelled “What am I seeing?” prompts beside
+  the results.
 - **Guided learning** — 21 predict–run–observe experiments (three per method),
   field-case figures, parameter help, a glossary, formula sheet, and downloadable
-  teacher worksheet/answer-key packs.
-- **Accessible charts** — named chart regions, keyboard-focusable plots,
-  fullscreen chart view, and print/reduced-motion styles.
+  teacher worksheet/answer-key packs. Every experiment now carries a runnable
+  `?scenario=` code, and both packs are generated from one tested builder.
+- **Bilingual PDF user guide** — a 22-page, bookmarked practical guide in English and
+  Indonesian, downloadable from the home page. It covers the first run, the
+  workspace map, a reliable workflow, one chapter for each of the seven
+  simulation methods, compare/sweep/challenge practice, HVSR inversion caveats,
+  a classroom plan, export evidence, mobile use, and troubleshooting. Both
+  editions share the same structure and use screenshots in the matching
+  language.
+- **Guess-the-model challenges** — a scored, strictly forward challenge on every
+  workspace. A hidden target is generated from a nearby model; the score compares
+  the clean forward curves, explains the mismatch, resets the model, and invalidates
+  the score when the model changes.
+- **Mobile and accessible controls** — chart-first workspaces on narrow screens,
+  a bottom-sheet model panel with Escape/focus handling, 44px targets across all
+  13 routes, AA text contrast, visible focus rings, a keyboard-only pass,
+  chart data summaries for screen readers and print, print-safe Plotly toolbars,
+  explicit reset zoom, keyboard-focusable plots, fullscreen chart view, and
+  reduced-motion styles.
+- **Progressive disclosure** — each non-HVSR workspace keeps its four to six
+  everyday controls visible and moves acquisition/solver details into an
+  “Advanced settings” accordion.
 - **Reference library** — 29 curated textbooks, papers and open resources with
   search and filters by method and type.
 - **Bilingual** — full EN/ID interface; `src/i18n/id.ts` is type-checked to stay
@@ -124,7 +153,7 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 
 ## Tests
 
-`npm test` runs 156 tests in 10 files; `npx tsc -b` and `npm run lint` are clean.
+`npm test` runs 178 tests in 14 files; `npx tsc -b` and `npm run lint` are clean.
 
 | Suite | File | Tests |
 | --- | --- | --- |
@@ -137,6 +166,10 @@ D: mirror still carry the former GeoSim Lab package (`id.geosim.lab`).
 | Resistivity solver | `src/sim/resistivity/ves.test.ts` | 18 |
 | Resistivity workspace model | `src/sim/resistivity/model.test.ts` | 5 |
 | HVSR | `src/sim/hvsr/hvsr.test.ts` | 12 |
+| R2 shared helpers | `src/components/workspace/r2/sweep.test.ts` | 6 |
+| R3 challenge engine | `src/components/workspace/r3/r3.test.ts` | 9 |
+| Teacher pack + scenario codes | `src/content/teacherPack.test.ts` | 3 |
+| Case-study source + figure audit | `src/content/cases.test.ts` | 4 |
 | Pages | `src/smoke.test.tsx` | 17 |
 
 The resistivity tests compare the numerical Hankel solution against closed-form
@@ -166,6 +199,8 @@ src/
     workspace/
       common.tsx       # generic forward-run state + WorkspaceShell + share/report
       sections.tsx     # layered/body cross-sections
+      r2/              # shared presets, A/B comparison, sensitivity sweep
+      r3/              # shared challenge engine, target generation, scoring
       resistivity/     # VES controls, curve, model SVG, summary
       gpr/ magnetic/ gravity/ reflection/ refraction/ hvsr/
     layout/            # Navbar, Footer, Layout, error boundary
@@ -177,13 +212,15 @@ src/
 
 - Light-first palette: surface `#FFFFFF`, panels `#F6F8FC`/`#EEF2F9`, ink
   `#252525`, muted `#5C6470`, primary `#3664F4`, warm `#E85353`, cool `#2E9FBF`,
-  sky `#60CBFF`. Text tokens for amber/teal are darkened for contrast while
+  sky `#60CBFF`. Text tokens for amber/teal are darkened for contrast; each
+  method also has a darker `ink` colour for text on light/tinted surfaces while
   charts use the raw accents.
 - Type: **Cabin** (UI) and **JetBrains Mono** (numbers/labels), self-hosted via
   `@fontsource`.
 - KawruhBhumi Lab identity extracted from the supplied brand board: a gunungan
   mark with a seismic waveform and subsurface waves, paired with the wordmark
-  in `src/assets/brand/`; app-icon/favicon sources live in `assets/brand/`.
+  in `src/assets/brand/`; the header uses responsive 1x/2x/3x/4x assets, and
+  app-icon/favicon sources live in `assets/brand/`.
 - Plotly charts share `plotTheme.ts` (light grid, fonts, diverging colorscales).
 
 ## Scientific integrity
@@ -193,8 +230,13 @@ src/
 - Every randomness source is seeded and deterministic.
 - Solver tests compare against independent closed forms (two-layer VES curves,
   prism limits, critical-angle geometry, crossover relations).
-- Reference entries link to their original sources; DOIs/URLs were checked
-  during development (some publishers block automated requests).
+- Reference entries link to their original sources; case-study DOI metadata was
+  rechecked against Crossref on 2026-10-29. All eight case studies are from
+  2022–2026, inside the five-year audit window; foundational references are
+  intentionally older.
+- Field-case figures are original schematics that summarise the cited survey.
+  The app does not reproduce source figures and makes no unverified licence
+  claim.
 - The app is a teaching tool, not a calibrated instrument. Feedback:
   `kholis.nh3@gmail.com`.
 
@@ -202,7 +244,10 @@ src/
 
 See [`DEPLOY.md`](./DEPLOY.md) for a zero-knowledge guide to Vercel, Netlify,
 Cloudflare Pages and any static server. No server-side runtime or environment
-variables are required.
+variables are required. The final v2.7 build was re-verified for the inline HVSR
+worker, downloads, print/PDF, the two guide PDFs, and 390px routes before
+delivery. The guide PDFs live in `public/guides/` and are copied into both
+`dist/guides/` and `dist-single/guides/`.
 
 ## Roadmap
 
@@ -212,9 +257,28 @@ variables are required.
   resistivity (VES) workspace, bilingual site copy, disclaimer.
 - v2.1: KawruhBhumi Lab rebrand, new logo/favicons, bilingual tagline,
   documentation refresh, and Android application ID update.
-- v2.2 (current): HVSR workspace, seven method/case studies, guided experiments,
-  scenario permalinks, parameter help, printable report, glossary/formula sheet,
-  HVSR comparison/sweep/challenge tools, teacher downloads, chart accessibility,
-  and responsive layout fixes.
+- v2.2: HVSR workspace, seven method/case studies, guided experiments, scenario
+  permalinks, parameter help, printable report, glossary/formula sheet, HVSR
+  comparison/sweep/challenge tools, teacher downloads, chart accessibility, and
+  responsive layout fixes.
+- v2.3 (R1): live 60-second homepage demo, mobile bottom-sheet controls, 44px
+  touch targets, keyboard/focus handling, reset zoom, advanced accordions on six
+  workspaces, persisted display settings, and mobile QA across all seven routes.
+- v2.4 (R2): visual preset cards, pin-A/B comparison with deltas, and guarded
+  one-factor sensitivity sweeps on the six non-HVSR workspaces, built on shared
+  R2 components and covered by bilingual QA.
+- v2.5 (R3): scored guess-the-model challenges on all seven workspaces,
+  a shared challenge engine for the six non-HVSR methods, and runnable scenario
+  codes in the EN/ID teacher worksheet and answer-key packs.
+- v2.6 (R4): content and scientific closure — reflection fold scope signed off,
+  HVSR kept as a labelled 1D proxy, case-study sources rechecked, unverified
+  figure-licence claims removed, and responsive 1x–4x logo assets.
+- v2.7 (current, R5–R6): accessibility and quality gate — AA contrast, 44px
+  targets and keyboard pass on all 13 routes, chart data summaries for screen
+  readers and print, PDF checks for all seven workspaces, Chromium/Firefox smoke
+  tests, and CLS reduced from 0.339 to 0.001. R6 final delivery re-verified the
+  inline HVSR worker, CSV/PNG/teacher-pack downloads, PDFs, and 390px routes;
+  the verified build is synced to the D: mirror. The home page also offers the
+  bilingual 22-page practical user guide as a downloadable PDF.
 - Later: FDTD GPR, elastic wavefield simulation, migration, and broader
   clearly-labelled inversion experiments.

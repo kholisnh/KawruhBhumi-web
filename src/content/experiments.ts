@@ -7,6 +7,7 @@ interface LText {
 
 export interface GuidedExperiment {
   id: string
+  scenarioId: string
   title: LText
   question: LText
   steps: LText[]
@@ -19,6 +20,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   gpr: [
     {
       id: 'frequency-depth',
+      scenarioId: 'sandBedrock',
       title: L('Frequency versus depth', 'Frekuensi versus kedalaman'),
       question: L(
         'Will a 900 MHz antenna see deeper or shallower than a 250 MHz antenna?',
@@ -36,6 +38,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'wet-clay',
+      scenarioId: 'wetClay',
       title: L('Why wet clay hides targets', 'Mengapa lempung basah menyembunyikan target'),
       question: L('What happens to the radargram when conductivity rises?', 'Apa yang terjadi pada radargram ketika konduktivitas naik?'),
       steps: [
@@ -50,6 +53,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'pipe-signature',
+      scenarioId: 'buriedPipe',
       title: L('Reading a pipe hyperbola', 'Membaca hiperbola pipa'),
       question: L('How does target depth change the shape of a diffraction hyperbola?', 'Bagaimana kedalaman target mengubah bentuk hiperbola difraksi?'),
       steps: [
@@ -66,6 +70,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   magnetic: [
     {
       id: 'depth-width',
+      scenarioId: 'steelTank',
       title: L('Depth controls anomaly width', 'Kedalaman mengendalikan lebar anomali'),
       question: L('What happens to a dipole anomaly when the source is buried deeper?', 'Apa yang terjadi pada anomali dipol jika sumber dikubur lebih dalam?'),
       steps: [
@@ -80,6 +85,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'inclination',
+      scenarioId: 'equatorial',
       title: L('The magnetic latitude effect', 'Efek lintang magnetik'),
       question: L('Why does a dike look different near the equator?', 'Mengapa dike tampak berbeda dekat ekuator?'),
       steps: [
@@ -94,6 +100,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'susceptibility',
+      scenarioId: 'archaeology',
       title: L('Contrast, not just size', 'Kontras, bukan hanya ukuran'),
       question: L('Can a small high-susceptibility body mimic a large weak body?', 'Dapatkah benda kecil bersuseptibilitas tinggi meniru benda besar yang lemah?'),
       steps: [
@@ -110,6 +117,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   gravity: [
     {
       id: 'depth-breadth',
+      scenarioId: 'shallowCavity',
       title: L('Depth broadens the anomaly', 'Kedalaman melebarkan anomali'),
       question: L('How does burial depth change a gravity anomaly?', 'Bagaimana kedalaman penguburan mengubah anomali gravitasi?'),
       steps: [
@@ -124,6 +132,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'density-contrast',
+      scenarioId: 'tunnel',
       title: L('Sign follows density contrast', 'Tanda mengikuti kontras densitas'),
       question: L('When does a cavity produce a negative anomaly?', 'Kapan rongga menghasilkan anomali negatif?'),
       steps: [
@@ -138,6 +147,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'radius-amplitude',
+      scenarioId: 'shallowCavity',
       title: L('Radius versus amplitude', 'Radius versus amplitudo'),
       question: L('Does doubling the radius double the anomaly?', 'Apakah menggandakan radius menggandakan anomali?'),
       steps: [
@@ -153,21 +163,23 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   ],
   reflection: [
     {
-      id: 'syncline-anticline',
-      title: L('Syncline or anticline?', 'Sinklin atau antiklin?'),
-      question: L('How do dipping reflections reveal fold geometry?', 'Bagaimana refleksi miring mengungkap geometri lipatan?'),
+      id: 'polarity-flip',
+      scenarioId: 'gasSand',
+      title: L('Polarity, not just brightness', 'Polaritas, bukan hanya kecerahan'),
+      question: L('How does a drop in impedance change reflection polarity?', 'Bagaimana penurunan impedansi mengubah polaritas refleksi?'),
       steps: [
-        L('Compare the syncline and anticline scenarios.', 'Bandingkan skenario sinklin dan antiklin.'),
-        L('Run both and trace the same reflector across the section.', 'Jalankan keduanya dan lacak reflektor yang sama melintasi penampang.'),
-        L('Decide whether the layers close upward or downward.', 'Tentukan apakah lapisan menutup ke atas atau ke bawah.'),
+        L('Run the gas-sand scenario and locate the top and base reflections.', 'Jalankan skenario pasir-gas dan temukan refleksi atas dan bawah.'),
+        L('Compare the wavelet polarity at the gas-sand top with a positive-contrast event.', 'Bandingkan polaritas wavelet di atas pasir-gas dengan event berkontras positif.'),
+        L('Relate the sign of R to the impedance change across each interface.', 'Hubungkan tanda R dengan perubahan impedansi pada tiap bidang batas.'),
       ],
       observe: L(
-        'Reflectors dip toward the fold axis in a syncline and away from it in an anticline; the section images geometry, not just depth.',
-        'Reflektor miring menuju sumbu lipatan pada sinklin dan menjauhinya pada antiklin; penampang mencitrakan geometri, bukan hanya kedalaman.',
+        'A velocity and density drop lowers impedance below the interface, so R is negative and the wavelet flips polarity. A bright event alone is not proof of gas.',
+        'Penurunan kecepatan dan densitas menurunkan impedansi di bawah bidang batas, sehingga R negatif dan wavelet berbalik polaritas. Event terang saja bukan bukti gas.',
       ),
     },
     {
       id: 'offset-resolution',
+      scenarioId: 'sandShale',
       title: L('Source-receiver offset', 'Offset sumber-penerima'),
       question: L('Why does offset change the arrival time of a reflection?', 'Mengapa offset mengubah waktu tiba refleksi?'),
       steps: [
@@ -182,6 +194,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'tuning',
+      scenarioId: 'thinBedTuning',
       title: L('Thin-bed tuning', 'Tuning lapisan tipis'),
       question: L('What happens when two reflectors are closer than the wavelet?', 'Apa yang terjadi jika dua reflektor lebih dekat daripada wavelet?'),
       steps: [
@@ -198,6 +211,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   refraction: [
     {
       id: 'hidden-layer',
+      scenarioId: 'velocityInversion',
       title: L('The hidden layer', 'Lapisan tersembunyi'),
       question: L('Can a thin slow layer disappear from a refraction travel-time curve?', 'Dapatkah lapisan lambat tipis hilang dari kurva waktu tempuh refraksi?'),
       steps: [
@@ -212,6 +226,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'dip',
+      scenarioId: 'soilBedrock',
       title: L('Dipping interface', 'Bidang batas miring'),
       question: L('Why do forward and reverse profiles give different velocities?', 'Mengapa profil maju dan balik memberi kecepatan berbeda?'),
       steps: [
@@ -226,6 +241,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'geophone-spacing',
+      scenarioId: 'deepBedrock',
       title: L('Geophone spacing and resolution', 'Jarak geofon dan resolusi'),
       question: L('How does station spacing affect the recovered velocity structure?', 'Bagaimana jarak stasiun memengaruhi struktur kecepatan yang diperoleh?'),
       steps: [
@@ -242,6 +258,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   resistivity: [
     {
       id: 'array-compare',
+      scenarioId: 'two-layer-bedrock',
       title: L('Wenner versus Schlumberger', 'Wenner versus Schlumberger'),
       question: L('How does the electrode array change the apparent-resistivity curve?', 'Bagaimana susunan elektroda mengubah kurva resistivitas semu?'),
       steps: [
@@ -256,6 +273,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'conductive-layer',
+      scenarioId: 'three-layer-clay',
       title: L('A conductive layer', 'Lapisan konduktif'),
       question: L('What does a low-resistivity layer do to a VES curve?', 'Apa yang dilakukan lapisan resistivitas rendah pada kurva VES?'),
       steps: [
@@ -270,6 +288,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'depth-sounding',
+      scenarioId: 'five-layer-layered',
       title: L('Depth of investigation', 'Kedalaman investigasi'),
       question: L('Does a longer array always see a deeper layer?', 'Apakah susunan lebih panjang selalu melihat lapisan lebih dalam?'),
       steps: [
@@ -286,6 +305,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
   hvsr: [
     {
       id: 'thickness-frequency',
+      scenarioId: 'iknAlluvium',
       title: L('Thickness sets the resonance', 'Ketebalan menentukan resonansi'),
       question: L('What happens to f0 when the soft surface layer thickens?', 'Apa yang terjadi pada f0 ketika lapisan lunak menebal?'),
       steps: [
@@ -300,6 +320,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'contrast',
+      scenarioId: 'hardBedrock',
       title: L('Impedance contrast and A0', 'Kontras impedansi dan A0'),
       question: L('Does a stronger Vs contrast always produce a larger H/V peak?', 'Apakah kontras Vs lebih kuat selalu menghasilkan puncak H/V lebih besar?'),
       steps: [
@@ -314,6 +335,7 @@ export const experimentsByMethod: Record<MethodId, GuidedExperiment[]> = {
     },
     {
       id: 'higher-mode-trap',
+      scenarioId: 'banjarmasinPeat',
       title: L('The higher-mode trap', 'Jebakan mode lebih tinggi'),
       question: L('Can the largest H/V peak be a higher mode rather than f0?', 'Dapatkah puncak H/V terbesar merupakan mode lebih tinggi, bukan f0?'),
       steps: [

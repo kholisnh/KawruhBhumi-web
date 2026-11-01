@@ -50,7 +50,9 @@ python3 -m http.server 8080 --directory dist
 ```
 
 Buka <http://localhost:8080>. Jika halaman muncul dan simulator berjalan,
-build sudah benar.
+build sudah benar. Uji juga lebar ponsel (±390px): tombol **Controls** harus
+membuka bottom sheet, tombol Close/Escape menutupnya, dan grafik tetap menjadi
+fokus utama.
 
 ### 1.1 Single-file HTML (opsional)
 
@@ -71,6 +73,25 @@ python3 -m http.server 8080 --directory dist-single
 > Jangan membuka `dist/index.html` dengan klik dua kali. Browser modern
 > memblokir modul JavaScript dari `file://`, sehingga halaman akan kosong.
 > Selalu lewat server (contoh di atas) atau hosting.
+
+### 1.2 Verifikasi rilis R6
+
+Build final v2.7 sudah melewati pemeriksaan berikut sebelum disinkronkan ke
+cermin D::
+
+- 178/178 tes, `npx tsc -b`, lint, `build`, dan `build:single` lulus;
+- worker inversi HVSR berjalan inline di `dist/` dan `dist-single/` tanpa
+  berkas worker eksternal;
+- CSV/PNG di ketujuh workspace dan worksheet/kunci jawaban guru terunduh valid;
+- panduan pengguna PDF EN/ID (22 halaman, ber-bookmark) terunduh dari beranda dan tersedia di
+  `dist/guides/` maupun `dist-single/guides/`;
+- PDF ketujuh workspace 4–5 halaman, memuat ringkasan grafik, tanpa toolbar
+  Plotly atau teks petunjuk cetak;
+- seluruh rute utama pada 390px tanpa target kecil, overflow, atau error
+  konsol; single-file GPR/HVSR juga bersih.
+
+Jika Anda mengubah kode setelah titik ini, jalankan ulang perintah pada
+bagian 1 dan checklist bagian 8 sebelum men-deploy.
 
 ---
 
@@ -223,10 +244,13 @@ akademik, subdomain seperti `kawruhbhumi.namakampus.ac.id` juga bisa.
 ## 8. Checklist sebelum menyerahkan tautan
 
 - [ ] `npx tsc -b`, `npm run lint`, `npm test` lulus.
-- [ ] `npm run build` selesai tanpa error.
+- [ ] `npm run build` dan `npm run build:single` selesai tanpa error.
 - [ ] Halaman utama, `#/metode`, `#/teori`, dan ketujuh simulator terbuka.
 - [ ] Toggle EN/ID berfungsi dan bertahan setelah refresh.
-- [ ] Ekspor CSV/PNG berfungsi di workspace.
+- [ ] Ekspor CSV/PNG berfungsi di workspace; worksheet/kunci jawaban terunduh.
+- [ ] Panduan pengguna PDF EN dan ID terunduh dari beranda.
+- [ ] Inversi HVSR selesai dan menampilkan “Inversion result”.
+- [ ] Cetak salah satu workspace menghasilkan PDF dengan ringkasan grafik.
 - [ ] Tautan `#/disclaimer` dan alamat email tampil.
 - [ ] URL produksi diuji dari ponsel (mode data seluler, bukan hanya Wi-Fi).
 

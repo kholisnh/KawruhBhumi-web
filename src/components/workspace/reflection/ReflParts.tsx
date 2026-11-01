@@ -5,6 +5,7 @@ import { fmt } from '../../../sim/core/format'
 import type { FieldError } from '../../../sim/core/fieldError'
 import type { ReflInput, ReflLayer, ReflResult, ReflSurvey } from '../../../sim/reflection/types'
 import { Plot, type PlotlyModule } from '../../charts/Plot'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Button } from '../../ui/Button'
 import { Panel } from '../../ui/Card'
 import { NumberField } from '../../ui/NumberField'
@@ -30,24 +31,28 @@ export function ReflSurveyPanel({ survey, errors, errDict, patch }: { survey: Re
         <NumberField label={t.nOffsets} value={survey.nOffsets} onChange={(v) => patch({ nOffsets: Math.round(v) })} step={1} error={errFor('survey.nOffsets')} />
         <NumberField label={t.minOffset} unit="m" value={survey.minOffsetM} onChange={(v) => patch({ minOffsetM: v })} error={errFor('survey.minOffsetM')} />
         <NumberField label={t.maxOffset} unit="m" value={survey.maxOffsetM} onChange={(v) => patch({ maxOffsetM: v })} error={errFor('survey.maxOffsetM')} help={help('refl.spread')} />
-        <NumberField label={d.wshared.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
-        <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
       </div>
-      <div className="mt-3">
-        <Toggle
-          label={t.autoWindow}
-          checked={autoWindow}
-          onChange={(on) => {
-            setAutoWindow(on)
-            patch({ timeWindowMs: on ? null : 500 })
-          }}
-        />
-        {!autoWindow && (
-          <div className="mt-2">
-            <NumberField label={t.timeWindow} unit="ms" value={survey.timeWindowMs ?? 500} onChange={(v) => patch({ timeWindowMs: v })} error={errFor('survey.timeWindowMs')} />
-          </div>
-        )}
-      </div>
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberField label={d.wshared.noise} unit="%" value={survey.noisePercent} onChange={(v) => patch({ noisePercent: v })} error={errFor('survey.noisePercent')} />
+          <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
+        </div>
+        <div className="mt-3">
+          <Toggle
+            label={t.autoWindow}
+            checked={autoWindow}
+            onChange={(on) => {
+              setAutoWindow(on)
+              patch({ timeWindowMs: on ? null : 500 })
+            }}
+          />
+          {!autoWindow && (
+            <div className="mt-2">
+              <NumberField label={t.timeWindow} unit="ms" value={survey.timeWindowMs ?? 500} onChange={(v) => patch({ timeWindowMs: v })} error={errFor('survey.timeWindowMs')} />
+            </div>
+          )}
+        </div>
+      </AdvancedSection>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -81,7 +86,7 @@ export function ReflLayersPanel({
               <div className="mb-2 flex items-center gap-2">
                 <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > 2 && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-xs text-gs-danger transition-colors hover:underline">
                     {t.removeLayer}
                   </button>
                 )}

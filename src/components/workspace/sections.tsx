@@ -133,8 +133,9 @@ export function AnomalySectionSvg({
     [lineLength, displayDepth],
   )
 
+  const sectionLabel = `${labels.distance} 0–${lineLength} m; ${labels.depth} 0–${displayDepth} m; ${bodies.map((body) => body.label).join(', ')}`
   return (
-    <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label="Model cross-section">
+    <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label={sectionLabel}>
       <rect x={MARGIN.left} y={MARGIN.top} width={PLOT_W} height={PLOT_H} fill={chartColors.deep} rx={6} />
       <rect x={MARGIN.left} y={MARGIN.top} width={PLOT_W} height={PLOT_H} fill={accent} opacity={0.04} />
       {bodies.map((b) => {
@@ -246,8 +247,9 @@ export function LayersSectionSvg({
     }
   }, [layers, lineLength, displayDepth])
 
+  const sectionLabel = `${labels.distance} 0–${lineLength} m; ${labels.depth} 0–${displayDepth} m; ${layers.map((layer) => layer.label).join(', ')}`
   return (
-    <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label="Layered model cross-section">
+    <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} style={{ width: '100%', height, display: 'block' }} role="img" aria-label={sectionLabel}>
       <rect x={MARGIN.left} y={MARGIN.top} width={PLOT_W} height={PLOT_H} fill={chartColors.deep} rx={6} />
       {layers.map((layer, i) => {
         const depthTop = tops[i]

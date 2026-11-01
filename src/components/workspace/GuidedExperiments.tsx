@@ -25,7 +25,7 @@ export function GuidedExperiments({ methodId }: { methodId: MethodId }) {
                 </li>
               ))}
             </ol>
-            <p className="mt-auto pt-2 text-xs leading-relaxed text-gs-mist/85">
+            <p className="mt-auto pt-2 text-xs leading-relaxed text-gs-mist">
               <span className="font-semibold text-gs-amber">{d.learning.observeLabel}: </span>
               {exp.observe[lang]}
             </p>

@@ -86,11 +86,11 @@ export function TheoryChapterPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <nav className="flex flex-wrap items-center gap-2 text-xs text-gs-mist" aria-label="Breadcrumb">
-        <Link to="/teori" className="hover:text-gs-cyan">
+        <Link to="/teori" className="inline-flex min-h-11 items-center hover:text-gs-cyan">
           {tr(site.chapterPage.theory, lang)}
         </Link>
         <span aria-hidden>/</span>
-        <Link to={`/metode/${meta.id}`} className="hover:text-gs-cyan">
+        <Link to={`/metode/${meta.id}`} className="inline-flex min-h-11 items-center hover:text-gs-cyan">
           {info.name}
         </Link>
         <span aria-hidden>/</span>
@@ -103,7 +103,7 @@ export function TheoryChapterPage() {
             <Link to={`/metode/${meta.id}`} className="inline-flex items-center gap-2">
               <span
                 className="flex h-8 w-10 items-center justify-center rounded-md text-xs font-bold tracking-wider"
-                style={{ backgroundColor: `${meta.accent}1a`, color: meta.accent }}
+                style={{ backgroundColor: `${meta.accent}1a`, color: meta.ink }}
               >
                 {info.abbr}
               </span>
@@ -134,7 +134,7 @@ export function TheoryChapterPage() {
 
         <article className="order-1 min-w-0 lg:order-2">
           <header className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wider uppercase" style={{ color: meta.accent }}>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wider uppercase" style={{ color: meta.ink }}>
               <span>{info.abbr}</span>
               <span className="text-gs-mist">·</span>
               <span className="gs-number">

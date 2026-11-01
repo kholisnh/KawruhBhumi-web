@@ -40,7 +40,7 @@ export function DisclaimerPage() {
           </svg>
           {copy.email}
         </a>
-        <p className="mt-4 text-xs text-gs-mist/80">{tr(copy.thanks, lang)}</p>
+        <p className="mt-4 text-xs text-gs-mist">{tr(copy.thanks, lang)}</p>
       </Card>
     </div>
   )

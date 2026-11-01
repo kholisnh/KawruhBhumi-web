@@ -33,15 +33,15 @@ export function InfoTip({ label, children }: { label: string; children: string }
           event.stopPropagation()
           setOpen((value) => !value)
         }}
-        className="relative grid h-4 w-4 place-items-center rounded-full border border-gs-mist/40 text-xs font-bold text-gs-mist transition-colors after:absolute after:-inset-1 after:content-[''] hover:border-gs-cyan/60 hover:text-gs-cyan focus-visible:ring-2 focus-visible:ring-gs-cyan/60 focus-visible:outline-none"
+        className="gs-infotip relative grid h-11 w-11 place-items-center rounded-full text-xs font-bold text-gs-mist transition-colors hover:text-gs-cyan focus-visible:ring-2 focus-visible:ring-gs-cyan/60 focus-visible:outline-none"
       >
-        i
+        <span aria-hidden className="grid h-4 w-4 place-items-center rounded-full border border-gs-mist/40">i</span>
       </button>
       {open && (
         <span
           id={id}
           role="tooltip"
-          className="absolute top-6 left-0 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-lg border border-gs-cyan/20 bg-gs-navy p-2.5 text-left text-xs leading-relaxed font-normal tracking-normal text-gs-mist normal-case shadow-panel"
+          className="absolute top-11 left-0 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-lg border border-gs-cyan/20 bg-gs-navy p-2.5 text-left text-xs leading-relaxed font-normal tracking-normal text-gs-mist normal-case shadow-panel"
         >
           {children}
         </span>

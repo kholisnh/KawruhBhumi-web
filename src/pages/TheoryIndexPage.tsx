@@ -24,7 +24,7 @@ export function TheoryIndexPage() {
                 <div className="flex items-center gap-3">
                   <span
                     className="flex h-8 w-10 items-center justify-center rounded-md text-xs font-bold tracking-wider"
-                    style={{ backgroundColor: `${meta.accent}1a`, color: meta.accent }}
+                    style={{ backgroundColor: `${meta.accent}1a`, color: meta.ink }}
                   >
                     {info.abbr}
                   </span>
@@ -36,10 +36,10 @@ export function TheoryIndexPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Link to={`/teori/${meta.id}/${chapters[0].id}`} className="text-xs font-semibold text-gs-cyan hover:text-gs-ice">
+                  <Link to={`/teori/${meta.id}/${chapters[0].id}`} className="inline-flex min-h-11 items-center text-xs font-semibold text-gs-cyan hover:text-gs-ice">
                     {tr(site.theoryPage.start, lang)}
                   </Link>
-                  <Link to={`/metode/${meta.id}`} className="text-xs text-gs-mist hover:text-gs-ice">
+                  <Link to={`/metode/${meta.id}`} className="inline-flex min-h-11 items-center text-xs text-gs-mist hover:text-gs-ice">
                     {tr(site.methodPage.overview, lang)}
                   </Link>
                 </div>
@@ -51,7 +51,7 @@ export function TheoryIndexPage() {
                       <span className="gs-number text-xs font-semibold text-gs-mist">{String(index + 1).padStart(2, '0')}</span>
                       <span className="mt-0.5 text-xs font-semibold text-gs-ice group-hover:text-gs-cyan">{tr(chapter.title, lang)}</span>
                       <span className="mt-1 line-clamp-2 flex-1 text-xs leading-relaxed text-gs-mist">{tr(chapter.summary, lang)}</span>
-                      <span className="mt-2 text-xs text-gs-mist/80">
+                      <span className="mt-2 text-xs text-gs-mist">
                         {chapter.minutes} {tr(site.methodPage.minutes, lang)}
                       </span>
                     </Link>

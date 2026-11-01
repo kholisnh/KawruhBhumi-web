@@ -48,7 +48,7 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={d.resources.searchPlaceholder}
-              className="w-full rounded-xl border border-black/10 bg-gs-deep/80 px-3 py-2 text-xs text-gs-ice outline-none transition-colors placeholder:text-gs-mist/50 focus:border-gs-cyan/60"
+              className="min-h-11 w-full rounded-xl border border-black/10 bg-gs-deep/80 px-3 py-2 text-xs text-gs-ice outline-none transition-colors placeholder:text-gs-mist focus:border-gs-cyan/60 focus-visible:ring-2 focus-visible:ring-gs-cyan/60"
             />
           </label>
           <div className="w-full sm:w-44">
@@ -116,18 +116,18 @@ export function ResourcesLibrary({ withHeading = true }: { withHeading?: boolean
                     href={ref.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs font-medium text-gs-cyan underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-ice"
+                    className="inline-flex min-h-11 items-center text-xs font-medium text-gs-cyan underline decoration-gs-cyan/40 underline-offset-2 hover:text-gs-ice"
                   >
                     {d.resources.openSource} ↗
                   </a>
-                  {ref.doi && <span className="gs-number text-xs text-gs-mist/80">doi:{ref.doi}</span>}
+                  {ref.doi && <span className="gs-number text-xs text-gs-mist">doi:{ref.doi}</span>}
                 </div>
               </li>
             ))}
           </ul>
         )}
 
-        <p className="mt-6 text-xs leading-relaxed text-gs-mist/80">{d.resources.disclaimer}</p>
+        <p className="mt-6 text-xs leading-relaxed text-gs-mist">{d.resources.disclaimer}</p>
       </div>
     </section>
   )

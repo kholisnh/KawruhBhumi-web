@@ -29,7 +29,7 @@ export function Button({ variant = 'secondary', size = 'md', icon, className = '
   return (
     <button
       type="button"
-      className={`inline-flex items-center justify-center whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${variantClass[variant]} ${sizeClass[size]} ${className}`}
+      className={`inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${variantClass[variant]} ${sizeClass[size]} ${className}`}
       {...rest}
     >
       {icon}

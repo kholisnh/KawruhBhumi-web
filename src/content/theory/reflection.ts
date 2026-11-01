@@ -122,6 +122,12 @@ export const reflectionTheory: MethodTheory = {
           'The largest simplification is the 1D layered earth with normal incidence. Real reflections are recorded over a range of angles, and amplitude varies with offset in ways that carry information about rock properties — but also complicate the simple R formula. Multiples bounce between interfaces and can be mistaken for deeper primaries.',
           'Penyederhanaan terbesar adalah bumi berlapis 1D dengan insidensi normal. Refleksi nyata terekam pada rentang sudut, dan amplitudonya bervariasi terhadap offset dengan cara yang membawa informasi properti batuan — tetapi juga mempersulit rumus R sederhana. Multiple memantul antar-bidang batas dan dapat disalahartikan sebagai primer yang lebih dalam.',
         ),
+        note(
+          'Fold geometry is not modelled by the solver',
+          'Geometri lipatan tidak dimodelkan oleh solver',
+          'The reflection workspace is a 1D flat-layer forward model. Anticline and syncline geometry is covered by the field cases and the schematic figure, not by the synthetic trace or gather.',
+          'Workspace refleksi adalah model forward lapisan datar 1D. Geometri antiklin dan sinklin dibahas melalui studi kasus lapangan dan gambar skematik, bukan melalui trace atau gather sintetik.',
+        ),
         list(
           ['Thin beds produce tuning, not separate reflections.', 'Lapisan tipis menghasilkan tuning, bukan refleksi terpisah.'],
           ['A wavelet is not a spike; phase and frequency shape the image.', 'Wavelet bukan spike; fase dan frekuensi membentuk citra.'],

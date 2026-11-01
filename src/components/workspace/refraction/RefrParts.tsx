@@ -7,6 +7,7 @@ import type { FieldError } from '../../../sim/core/fieldError'
 import type { RefrInput, RefrLayer, RefrResult, RefrSurvey } from '../../../sim/refraction/types'
 import { Plot, type PlotlyModule } from '../../charts/Plot'
 import { baseLayout, chartColors, MONO_FONT } from '../../charts/plotTheme'
+import { AdvancedSection } from '../../ui/AdvancedSection'
 import { Button } from '../../ui/Button'
 import { Panel } from '../../ui/Card'
 import { NumberField } from '../../ui/NumberField'
@@ -28,11 +29,15 @@ export function RefrSurveyPanel({ survey, errors, errDict, patch }: { survey: Re
       <div className="grid grid-cols-2 gap-3">
         <NumberField label={t.spread} unit="m" value={survey.spreadLength} onChange={(v) => patch({ spreadLength: v })} error={errFor('survey.spreadLength')} help={help('refr.offset')} />
         <NumberField label={d.wshared.spacing} unit="m" value={survey.geophoneSpacing} onChange={(v) => patch({ geophoneSpacing: v })} error={errFor('survey.geophoneSpacing')} help={help('refr.spacing')} />
-        <NumberField label={d.wshared.noise} unit="ms" value={survey.noiseMs} onChange={(v) => patch({ noiseMs: v })} error={errFor('survey.noiseMs')} />
-        <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
         <NumberField label={t.freq} unit="Hz" value={survey.waveletFreqHz} onChange={(v) => patch({ waveletFreqHz: v })} error={errFor('survey.waveletFreqHz')} />
         <NumberField label={t.traceNoise} unit="%" value={survey.traceNoisePercent} onChange={(v) => patch({ traceNoisePercent: v })} error={errFor('survey.traceNoisePercent')} />
       </div>
+      <AdvancedSection title={d.wshared.advancedSettings} hint={d.wshared.advancedHint}>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberField label={d.wshared.noise} unit="ms" value={survey.noiseMs} onChange={(v) => patch({ noiseMs: v })} error={errFor('survey.noiseMs')} />
+          <NumberField label={d.wshared.seed} value={survey.seed} onChange={(v) => patch({ seed: Math.round(v) })} step={1} />
+        </div>
+      </AdvancedSection>
       <WsErrorList errors={errors} dict={errDict} />
     </Panel>
   )
@@ -66,7 +71,7 @@ export function RefrLayersPanel({
               <div className="mb-2 flex items-center gap-2">
                 <span className="gs-number text-xs text-gs-mist">{isHalf ? t.halfSpace : `${t.layerN} ${i + 1}`}</span>
                 {!isHalf && layers.length > 2 && (
-                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto text-xs text-gs-danger transition-colors hover:text-gs-danger/80">
+                  <button type="button" onClick={() => remove(layer.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-xs text-gs-danger transition-colors hover:underline">
                     {t.removeLayer}
                   </button>
                 )}

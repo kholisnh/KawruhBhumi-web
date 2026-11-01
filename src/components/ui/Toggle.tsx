@@ -10,14 +10,14 @@ interface ToggleProps {
 
 export function Toggle({ label, checked, onChange, title, help }: ToggleProps) {
   return (
-    <span className="inline-flex items-center gap-2 text-xs text-gs-mist">
+    <span className="inline-flex shrink-0 items-center gap-2 text-xs text-gs-mist">
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         title={title}
         onClick={() => onChange(!checked)}
-        className="group inline-flex items-center gap-2 hover:text-gs-ice"
+        className="group inline-flex min-h-11 items-center gap-2 hover:text-gs-ice"
       >
         <span
           className={`relative inline-block h-4.5 w-8 rounded-full transition-colors ${
